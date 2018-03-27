@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <!-- 设置 -->
+    <script type="text/javascript" src="/smosplat/common/js/lib/sockjs/sockjs-1.1.1.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/stomp/stomp.min.js"></script>
+    <!--     自定义alert -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/autoSetting.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+    th.ui-th-column div {
+        white-space: normal !important;
+        height: auto !important;
+        padding: 0px;
+    }
+    
+    .tableEditDetail th,
+    .tableEditDetail td {
+        height: 40px;
+        line-height: 40px;
+    }
+    </style>
+    <script type="text/javascript">
+    // 为了适配不同浏览器，弹出框的高度都通过计算得到
+    $(function() {
+        var bodyHeight = $('#autoBody').height();
+        //设置模态框弹出的表格的高度
+        $("#deviceInfo-modal").height(bodyHeight - 100);
+    })
+    </script>
+</head>
+
+<body class="easyui-layout" id="autoBody">
+    <div data-options="region:'center',border:false">
+        <div class="easyui-layout fitParent">
+            <div data-options="region:'center'">
+                <div class="easyui-layout" style="width:100%;height:100%;">
+                    <div data-options="region:'north',border:false" id="north_rg" style="height:35%;padding:0 6px;">
+                        <div class="topTool" style="width:100%;height:32px;margin-top:4px;">
+                            <p style="margin:5px 3px;float:left;">
+                                <a data-toggle="modal" class="btn btn-xs btn-info" id="addNetworkBtn"><i class="glyphicon glyphicon-plus"></i>&nbsp新增</a>
+                            </p>
+                        </div>
+                        <div class="tableListTitle" style="margin-top:4px;">
+                            网络列表设置
+                        </div>
+                        <table id="networkDG">
+                        </table>
+                    </div>
+                    <div data-options="region:'center',border:false" id="center_rg" style="padding:0 6px;">
+                        <div class="topTool" style="width:100%;height:32px;margin-top:4px;">
+                            <p style="margin:5px 3px;float:left;">
+                                <a data-toggle="modal" class="btn btn-xs btn-info" id="addMcuBtn" href="#warningInfoDialog"><i class="glyphicon glyphicon-plus"></i>&nbsp新增</a>
+                            </p>
+                        </div>
+                        <div class="tableListTitle" style="margin-top:4px;">
+                            MCU列表设置
+                        </div>
+                        <table id="mcuDG">
+                        </table>
+                    </div>
+                    <div data-options="region:'south',border:false" style="height:40px;padding:0 6px;line-height: 32px;vertical-align: middle;text-align: center">
+	                    <label>mcu通讯时间：</label>
+	                    <input id="connectMcuTime" style="width:30px;">分钟
+                       	 <label style = "margin-left:10px"> 采集间隔（大于最大mcu数量*mcu通讯时间）：</label>
+                        <input id="period" style="width:30px;">分钟
+                        <!-- 采集按钮 -->
+                        <button id="startBtn" class="btn btn-danger btn-xs" style="width:120px;height:40px;word-wrap: break-word;word-break: break-all;white-space: normal;"></button>
+                        <!-- 召测按钮 -->
+                        <button id="callCollectBtn" class="btn btn-danger btn-xs" style="width:120px;height:40px;word-wrap: break-word;word-break: break-all;white-space: normal;" ></button>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'east'" style="width:40%;">
+                <div class="easyui-layout" style="width:100%;height:100%;">
+                    <div data-options="region:'north',border:false" class="noBg" style="line-height: 33px; text-align: center; color: #136383; font-weight: bold; font-size: 16px;">
+                        <label>实时采集信息</label>
+                    </div>
+                    <div data-options="region:'center',border:false" style="padding:0px 15px 15px 10px;">
+                        <textarea id="onlineInfo" style="width:100%;height:99%;"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="networkInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="sectionForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        网络连接参数
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1">
+                                        网络连接名称：
+                                    </th>
+                                    <td colspan="1">
+                                        <input name="networkName" type="text" maxlength="100" id="networkName" class="input" style="width:200px;" />
+                                    </td>
+                                </tr>
+                                <tr id="startPointNameTR">
+                                    <th colspan="1">
+                                        接入方式：
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="type" class="easyui-combobox" data-options="valueField:'id',textField:'text'" style="width:200px;">
+                                    </td>
+                                </tr>
+                                <tr id="endPointNameTR">
+                                    <th colspan="1">
+                                        IP：
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="ip" name="ip" type="text" maxlength="100" class="input" style="width:200px; ">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        端口：
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="port" name="port" type="text" maxlength="100" class="input" style="width:200px;">
+                                    </td>
+                                </tr>
+                                <tr style="display: none;">
+                                    <td class="form-td">
+                                        <label id="addOrEditNetwork"></label>
+                                    </td>
+                                    <td class="form-td"></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">
+                                        <button type="button" id="saveNetworkBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelNetworkBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mcuInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="mcuForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        MCU连接参数
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+                                <tr style="display: none;">
+                                    <td class="form-td">
+                                        <label id="addOrEditMcu"></label>
+                                    </td>
+                                    <td class="form-td"></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        mcu编号：
+                                    </th>
+                                    <td colspan="1">
+                                        <input name="deviceSN" type="text" maxlength="100" id="deviceSN" class="input" style="width:200px;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        mcu型号：
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="deviceModel" class="easyui-combobox" data-options="valueField:'devModelUuid',textField:'devModelName'" style="width:200px;"> 需要跟真实的mcu型号对应，否则无法进行采集！
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        mcu箱号：
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="sn" name="sn" type="text" maxlength="100" class="input" style="width:200px; ">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        网络连接：
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="network" class="easyui-combobox" data-options="valueField:'networkUuid',textField:'networkName'" style="width:200px;"> 请通过测试保证网络连接通讯正常！
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">
+                                        <button type="button" id="saveMcuBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelNetworkBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="deviceInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="deviceInfo-modal" style="width:700px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="tableListTitle" style="margin-top:3px;">
+                            连接设备信息
+                        </div>
+                        <table id="deviceInfoDG"></table>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

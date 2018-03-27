@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="common/css/bootstrap.min.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/organ/js/organDetail.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/util.js"></script>
+    <title>Insert title here</title>
+</head>
+
+<body class="easyui-layout">
+    <!-- 本机构信息列表 -->
+    <div id="organTableContainer" data-options="region:'center',border:false" ">
+        <p style="margin:5px"><a id="toOrganEdit" href="#" class="btn btn-sm btn-success">编辑</a></p>
+        <table class="tableEditDetail" id="organTable" cellpadding="0" cellspacing="1">
+            <tr>
+                <th colspan="1">
+                    机构名称
+                </th>
+                <td colspan="1">
+                    <label id="organName"></label>
+                </td>
+                <th colspan="1">
+                   设立时间
+                </th>
+                <td colspan="1">
+                    <label id="establishedTime"></label>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    机构地址
+                </th>
+                <td colspan="1">
+                    <label id="adress"></label>
+                </td>
+                <th colspan="1">
+                    	 组织机构代码
+                </th>
+                <td colspan="1">
+                    <label id="organCode"></label>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    联系人
+                </th>
+                <td colspan="1">
+                    <label id="workerName"></label>
+                </td>
+                <th colspan="1">
+                    联系人电话
+                </th>
+                <td colspan="1">
+                    <label id="phone"></label>
+                </td>
+            </tr>
+            
+<!--             <tr> -->
+<!--                 <th colspan="1"> -->
+<!--                     机构联系电话 -->
+<!--                 </th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <label id="telephone"></label> -->
+<!--                 </td> -->
+<!--                 <th colspan="1"> -->
+<!--                     邮政编码 -->
+<!--                 </th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <label id="postcode"></label> -->
+<!--                 </td> -->
+<!--             </tr> -->
+            
+            <tr>
+                <th colspan="1">
+           	检测资质证书编号
+                </th>
+                <td colspan="1">
+                    <label id="detactNumber"></label>
+                    <a id="viewDetact" style="margin-left:20px" class="viewDoc glyphicon glyphicon-search">查看</a>
+                </td>
+                <th colspan="1">
+                     计量认证证书编号
+                </th>
+                <td colspan="1">
+                    <label id="meteringNumber1"></label>
+                    <a id="viewMetering" style="margin-left:20px" class="viewDoc glyphicon glyphicon-search">查看</a>
+                </td>
+            </tr>
+            
+            <tr>
+                <th colspan="1">
+           	法定代表人
+                </th>
+                <td colspan="1">
+                    <label id="representative"></label>
+                </td>
+                <th colspan="1">
+                     技术负责人
+                </th>
+                <td colspan="1">
+                    <label id="techDirector"></label>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

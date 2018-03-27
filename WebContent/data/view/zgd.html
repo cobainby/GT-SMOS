@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周边管线竖向位移</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/smosplat/common/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <!-- echarts -->
+    <script type="text/javascript" src="/smosplat/common/js/lib/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/echarts/theme/roma.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/echarts/theme/macarons.js"></script>
+    <!-- jqGrid -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="common/js/util.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <!-- 推送相关 -->
+    <script type="text/javascript" src="common/js/lib/sockjs/sockjs-1.1.1.min.js"></script>
+    <script type="text/javascript" src="common/js/lib/stomp/stomp.min.js"></script>
+    <script src="/smosplat/data/js/zgd.js"></script>
+    <!--    时间控件 -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+    <!--预加载动画 -->
+    <script type="text/javascript" src="/smosplat/common/js/PerfectLoad.js"></script>
+    <style type="text/css">
+    .tableEditDetail th,
+    .tableEditDetail td {
+        height: 40px;
+        line-height: 40px;
+    }
+    </style>
+</head>
+
+<body class="gray-bg easyui-layout">
+    <div data-options="region:'center'" id="zgdGrid" style="width:100%;height:50%;padding:0 5px;">
+    <p style="margin:5px 5px 0 3px;float:right;">
+          <a data-toggle="modal" class="btn btn-xs btn-info" id="originalDataButton" ><i class="glyphicon glyphicon-cloud-download"></i>原始数据</a>
+          <a data-toggle="modal" class="btn btn-xs btn-info" id="dataExportButton" ><i class="glyphicon glyphicon-list-alt"></i>&nbsp导出报表</a>
+        </p>
+        <div class="tableListTitle" style="margin-top:5px;">
+            <label style="margin-right:-150px;">周边管线竖向位移</label>
+        </div>
+        <table id="zgdDG"></table>
+    </div>
+    <!-- 线状图 -->
+    <div data-options="region:'south'" style="width:100%;height:50%;">
+        <div class="easyui-tabs" style="width:100%;height:100%;">
+            <div title="累计变化量" id="echarts" style="width:100%;height:100%;padding:10px;">
+                <div id="zgdLineDivAccum" style="width:100%;height:100%;"></div>
+            </div>
+            <div title="单次变化量" style="width:100%;height:100%;padding:10px;">
+                <div id="zgdLineDivGap" style="width:100%;height:100%;"></div>
+            </div>
+        </div>
+    </div>
+     <!--原始数据下载 -->
+    <div id="originalDataDialog" class="modal fade" data-backdrop="false">
+       <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="originalForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        原始数据下载
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="originalInfo" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        选择时间：
+                                    </th>
+                                    <td colspan="1" style="background-color: #fff2ec;text-align:center;">
+                                    <input class="btn btn-xs btn-danger" id="startTime" placeholder="初始日期" style="height:20px;width:60%;text-align:center;" size="12" data-options="required:true" value="" readonly>
+                                    </td>
+                                    <td colspan="1" style="background-color: #fff2ec;text-align:center;">
+                                    <input class="btn btn-xs btn-danger" id="endTime" placeholder="结束日期" style="height:20px;width:60%;text-align:center;" size="12" data-options="required:true" value="" readonly>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <th colspan="3">
+                                        <button type="button" id="downLoadBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-share"></i>&nbsp确定</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelNetworkBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        原始数据列表：
+                                    </th>
+                                    <td colspan="2" id="textList" style="text-align:center">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 导出监测项数据 -->
+    <div id="dataExportDialog" class="modal fade" data-backdrop="false">
+       <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="exportForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        数据导出
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        项目名称：
+                                    </th>
+                                    <td colspan="2">
+                                        <input name="projectName" type="text" maxlength="100" id="projectName" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        项目地址：
+                                    </th>
+                                    <td colspan="2">
+                                        <input name="projectAddress" type="text" maxlength="100" id="projectAddress" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                       测量仪器：
+                                    </th>
+                                    <td colspan="2">
+                                        <input name="deviceName" type="text" maxlength="100" id="deviceName" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        选择时间：
+                                    </th>
+                                    <td colspan="1" style="background-color: #fff2ec;">
+                                      起始:
+                                    <input id="beginDate" class="easyui-datetimebox" style="width:132px;" data-options="required:true,missingMessage:'不能为空！'" data-options="sharedCalendar:'#cc'">
+                                    </td>
+                                    <td colspan="1" style="background-color: #fff2ec;">
+                                        结束:
+                                    <input id="endDate" class="easyui-datetimebox" style="width:132px;" data-options="required:true,missingMessage:'不能为空！'" data-options="sharedCalendar:'#cc'">
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        参考规范：
+                                    </th>
+                                    <td colspan="2">
+                                        <textarea name="specification" rows="2" cols="20" id="specification" class="input" style="height:80px;width:90%;margin:5px;" required></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3">
+                                        <button type="button" id="saveExportBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-share"></i>&nbsp导出</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelNetworkBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,170 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>基坑平台登录</title>
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
+    <script src="common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+<!--     <script src="common/js/jquery.cookie.js"></script> -->
+<!--     <script src="common/js/public.js"></script> -->
+    <script type="text/javascript" src="common/js/util.js"></script>
+<!--     <script type="text/javascript" src="common/js/gVerify.js"></script> -->
+    <style type="text/css">
+    body {
+        font-family: Cambria, "Hoefler Text", "Liberation Serif", Times, "Times New Roman", serifbackground: #fff;
+        color: #2b2b2b;
+    }
+    .div1 {
+        padding-left: 30px;
+        background: url(/smosplat/common/image/loginName.png) 4px no-repeat;
+        background-color: #FFFFFF;
+        width: 140px;
+        height: 25px;
+        line-height: 25px;
+        border: 1px solid #ccc;
+    }
+    .div2 {
+        padding-left: 30px;
+        background: url(/smosplat/common/image/password.png) 4px no-repeat;
+        background-color: #FFFFFF;
+        width: 140px;
+        height: 25px;
+        line-height: 25px;
+        border: 1px solid #ccc;
+    }
+    input {
+        border: 0;
+        font-size: 18px;
+    }
+    a {
+        text-decoration: none;
+        cursor: pointer;
+        height: 28px;
+        width: 72px;
+        display: inline-block;
+        color: #fff;
+        line-height: 28px;
+        text-align: center;
+        margin-top: 10px;
+    }
+    .log {
+        background: url(/smosplat/common/image/log.png) no-repeat;
+        margin-right: 16px;
+        margin-left: 48px
+    }
+    .reset {
+        background: url(/smosplat/common/image/reset.png) no-repeat;
+        color: #6d6d6d;
+    }
+    </style>
+    <script>
+     $(function() {
+    	 var bodyHeight = $('#monitorBody').height();
+         //设置logo文字的占用高度
+         $("#logoText").height(bodyHeight/3.1);
+//     	var verifyCode = new GVerify("v_container");
+        //登录
+        $("#loginBtn").bind("click", function() {
+//         	var res = verifyCode.validate($("#code_input").val());
+//             if(res){
+//              getLogin();
+//             }else{
+//             	swal({title:"验证码错误！",type:"error"});
+//             	//刷新验证码
+//             	verifyCode.refresh();
+//               }
+        	getLogin();
+        });
+        $("body").keyup(function(e) {
+            if (e.keyCode == 13) {
+              $("#loginBtn").click();
+            }
+        });
+        //清空所填选项
+        $("#removeBtn").bind("click",function(){
+        	$('.user-name').val("");
+        	$('.password').val("");
+        	$("#code_input").val("");
+        })
+    });
+    function getLogin() {
+        var loginName = $('.user-name').val();
+        var password = $('.password').val();
+        if(loginName==""||password==""){
+          swal({title:"请输入完整的账号密码！",type:"warning"});
+          return;
+        }
+        //验证用户名和密码并跳转到首页
+        $.post('login', {
+            loginName: loginName,
+            password: password
+        }, function(data, dataStatus) {
+            var dataObj = JSON.parse(data);
+            if (dataObj.result == 0) {
+                window.location.href = "/smosplat/projectIndex";
+            } else if (dataObj.result == -1) {
+              swal({title:"登录失败！",text:dataObj.msg,type:"error"});
+            }
+        });
+    }
+    
+  </script>
+</head>
+
+<body id="monitorBody">
+    <img src="/smosplat/common/image/underground.png" width="100%" height="100%" style="z-index:-100;position:absolute;left:0;top:0">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td id="logoText">&nbsp;</td>
+        </tr>
+    </table>
+    <table width="543" height="255" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td background="/smosplat/common/image/kuang.png">
+                <table width="320" border="0" align="center" cellpadding="0" cellspacing="15">
+                    <tr>
+                        <td width="25%"><span >用户名：</span></td>
+                        <td width="75%">
+                            <div class="div1">
+                                <input name="textfield" class="user-name" type="text" id="textfield" style="height:22px;width:137px;outline:none; vertical-align:middle;" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><span >密　码：</span></td>
+                        <td width="75%">
+                            <div class="div2">
+                                <input name="textfield2" type="password" class="password" id="textfield2" style="height:22px;width:137px;outline:none;vertical-align:middle;" />
+                            </div>
+                        </td>
+                    </tr>
+<!--                     <tr> -->
+<!--                         <td><span class="STYLE2">验证码：</span></td> -->
+<!--                         <td> -->
+<!--                            <span id="v_container" style="width:60px;height: 30px;"></span> -->
+<!--                            <input  id="code_input" style="border: 1px solid #ccc;float:left;height:30px;width:70px;outline:none; vertical-align:middle;" /> -->
+<!--                         </td> -->
+<!--                     </tr> -->
+                    <tr>
+                        <td colspan="2">
+                            <div align="center"><a id="loginBtn" class="log">登&nbsp;录</a><a  id="removeBtn" class="reset">重&nbsp;置</a></div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table id="logoInfo"  style="width:99%;border:0;position:absolute;bottom:50px;text-align:center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td height="26">
+                <div  class="STYLE1" align="right"><label>版权所有:深圳市建设工程质量检测中心&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></div>
+            </td>
+            <td height="26">
+                <div  class="STYLE1" align="left"><label>&nbsp;&nbsp;技术支持:广州南方测绘科技股份有限公司</label></div>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

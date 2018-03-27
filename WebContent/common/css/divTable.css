@@ -1,0 +1,192 @@
+/* 解决百度地图label样式冲突导致边框不能正常显示 */
+#map label {
+	max-width: none;
+}
+
+.tableEditDetail {
+	border-collapse: separate;
+	border-spacing: 1px
+}
+
+.tableEditDetail input {
+	margin: 5px 0px 5px 0px !important;
+	padding: 0 !important;
+}
+
+.tableEditDetail input:focus, textarea:focus {
+	border-color: #03a9f4;
+	box-shadow: 0 0 15px #03a9f4;
+	-webkit-box-shadow: 0 0 15px #03a9f4;
+	-moz-box-shadow: 0 0 15px #03a9f4;
+}
+
+input {
+	width: 60%;
+	height: 20px;
+	font-size: 12px;
+	border: 1px solid #7f9db9;
+	line-height: 20px;
+}
+
+/*按钮样式*/
+.btton133 {
+	width: 133px;
+	height: 29px;
+	font-size: 12px;
+	line-height: 29px;
+	border-style: none;
+	border-color: inherit;
+	border-width: medium;
+	background-color: #03a9f4;
+	color: #fff;
+	border-radius: 3px;
+}
+
+.btton85 {
+	width: 85px;
+	height: 22px;
+	font-size: 12px;
+	line-height: 22px;
+	border-style: none;
+	border-color: inherit;
+	border-width: medium;
+	background-color: #03a9f4;
+	color: #fff;
+	border-radius: 3px;
+}
+
+/*头部提示地址表格样式*/
+#tableHeader {
+	width: 100%;
+	height: 43px;
+	margin: 0 auto;
+	border: 0px;
+	font-size: 12px;
+	background-image: url(../image/normal_05.gif);
+}
+
+#tableHeader th {
+	width: 573px;
+	height: 43px;
+	color: #237fd2;
+	text-align: left;
+	font-weight: normal;
+	padding-left: 35px;
+	background-image: url(../image/normal_03.gif);
+	background-repeat: no-repeat;
+}
+
+#tableHeader td {
+	font-size: 12px;
+	text-align: right;
+	margin-right: 10px;
+}
+
+.topTool {
+	border: 1px solid #D0E2F8;
+}
+
+/*编辑详情表格样式*/
+.tableEditDetail {
+	width: 99%;
+	margin: 0 auto;
+	font-size: 12px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	table-layout: fixed;
+	background-color: #cad8e6;
+}
+
+.tableEditDetail th {
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-weight: normal;
+	background-color: #f0faff;
+}
+
+.tableEditDetail td {
+	height: 30px;
+	line-height: 30px;
+	text-align: left;
+	padding-left: 5px;
+	word-wrap: break-word;
+	background-color: #fafafa;
+}
+
+.tableEditDetail td .span {
+	color: Red;
+}
+
+/*自定义表头风格1*/
+.tableListTitle {
+	color: #237fd2;
+	height: 25px;
+	font-size: 16px;
+	font-weight: nomal;
+	text-align: center;
+	padding-top: 4px;
+	background: url(../image/normal_04.gif) no-repeat;
+	background-position: center;
+}
+
+/*自定义表头风格2*/
+.tableListTitle2 {
+	color: #237fd2;
+	height: 25px;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 5px;
+}
+/*自定义表头风格3*/
+.tableListTitle3 {
+	color: #fff;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 4px;
+	background: url(../image/normal_02.gif) repeat-x;
+}
+
+/*表格自动换行*/
+.ui-jqgrid tr.jqgrow td {
+	white-space: normal !important;
+	height: auto;
+	vertical-align: middle
+}
+
+.normal_06 {
+	height: 40px;
+	/*             background-image: url(../image/normal_06.gif); */
+}
+
+.normal_09 {
+	float: left;
+	width: 90px;
+	height: 22px;
+	margin-top: 3px;
+	margin-left: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 5px;
+	cursor: pointer;
+	color: #FFFFFF;
+	background-image: url(../image/normal_09.gif);
+}
+
+.normal_10 {
+	float: left;
+	width: 90px;
+	height: 22px;
+	margin-top: 3px;
+	margin-left: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 5px;
+	cursor: pointer;
+	color: #237fd2;
+	background-image: url(../image/normal_10.gif);
+}

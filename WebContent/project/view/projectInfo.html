@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link href="/smosplat/common/css/common.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=w0gvXYvFYD842phtrIRR1cWQvrfZLgsk"></script>
+    <script type="text/javascript" src="/smosplat/project/js/projectInfo.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+    textArea {
+        overflow: hidden;
+        vertical-aglin: middle;
+        line-height: 30px;
+        width: 80%;
+    }
+
+    .easyui-combobox {
+        height: 30px;
+        line-hgiht: 30px;
+    }
+
+    .tableEditDetail {
+        color: #000
+    }
+/*  地图模糊搜索的下拉框 */
+    .tangram-suggestion-main {  
+    position: absolute;  
+    z-index: 10000;  
+    left: 542px;  
+    top: 128px;  
+    width: 300px; 
+    overflow:scroll;  
+    overflow-x:hidden;  
+}  
+    </style>
+</head>
+
+<body id="monitorBody">
+    <form id="projectForm" style="height:100%;overflow:auto;">
+        <input id="formUrl" type="hidden">
+        <input id="projectUuid" type="hidden">
+        <table id="tableHeader" cellpadding="0" cellspacing="0">
+            <tr>
+                <th id="tableName">
+                    新建工程
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="projectInfo" style="height:45%;" cellpadding="0" cellspacing="1">
+            <tr>
+                <th style="width: 15%;">
+                    工程编号
+                </th>
+                <td style="width: 35%">
+                    <textarea name="code" rows="2" cols="20" class="input" id="code" style="height:30px;width:80%;"></textarea>
+                </td>
+                <th style="width: 15%">
+                    监督编号
+                </th>
+                <td>
+                    <textarea name="superviseCode" rows="2" cols="20" class="input" id="superviseCode" style="height:30px;width:80%;"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%">
+                    工程名称
+                </th>
+                <td>
+                    <textarea name="projectName" rows="2" cols="20" id="projectName" class="input" style="height:30px;width:80%;" required></textarea>
+                </td>
+                <th>
+                    工程地址
+                </th>
+                <td>
+                    <textarea name="address" rows="2" cols="20" id="address" class="input" style="height:30px;width:80%;" required></textarea>
+                    <input type="hidden" name="" id="" />
+                    <input type="hidden" name="" id="" />
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    工程类别
+                </th>
+                <td>
+                    <input name="projectType" id="projectType" class="easyui-combobox" data-options="valueField: 'value',textField: 'label'" style="width:80%;height:30px;" />
+                </td>
+                <th>
+                    经纬度
+                </th>
+                <td>
+                    <label>经度</label>
+                    <input name="lon" maxlength="20" type="text" id="lon" class="input" style="width:16%;" disabled="true " />
+                    <label>纬度</label>
+                    <input name="lat" maxlength="20" type="text" id="lat" class="input" style="width:16%;" disabled="true " />
+                    <input type="button" data-toggle="modal" id="lonlatSelect" class="btton85" value="获取经纬度" />
+                    <label style="color:red">(*请选择位置)</label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    支护形式
+                </th>
+                <td>
+                    <textarea name="structure" rows="2" cols="20" id="structure" class="input" style="height:30px;width:80%;"></textarea>
+                </td>
+                <th>
+                    安全等级
+                </th>
+                <td>
+                    <select name="safeLevel" id="safeLevel" class="easyui-combobox" style="width:80%;height:30px;">
+                        <option value="">---请选择---</option>
+                        <option value="1">一级</option>
+                        <option value="2">二级</option>
+                        <option value="3">三级</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    基坑设计深度
+                </th>
+                <td>
+                    <textarea name="deep" rows="2" cols="20" id="deep" class="input" style="height:30px;width:80%;"></textarea>(M)
+                </td>
+                <th>
+                    基坑周长:
+                </th>
+                <td>
+                    <textarea name="perimeter" rows="2" cols="20" id="perimeter" class="input" style="height:30px;width:80%;"></textarea>(M)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监测负责人
+                </th>
+                <td>
+                    <input name="monitorLeader" type="text" id="monitorLeader" class="input" style="width:60%;height:30px;" disabled="true "  />
+                    <a id="addMonitorLeader" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp添加&nbsp</a>
+                    <a id="deleteMonitorLeader" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-remove"></i>&nbsp删除&nbsp</a>
+                </td>
+                <th>
+                    监测人员
+                </th>
+                <td>
+                    <input name="monitorWorker" type="text" id="monitorWorker" class="input" style="width:60%;height:30px;" disabled="true " />
+                    <a id="addMonitorWorker" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp添加&nbsp</a>
+                    <a id="deleteMonitorWorker" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-remove"></i>&nbsp删除&nbsp</a>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监督单位
+                </th>
+                <td>
+                    <textarea name="superviseCompany" rows="2" cols="20" id="superviseCompany" class="input" style="height:30px;width:80%;"></textarea>
+                </td>
+                <th>
+                    监督人员
+                </th>
+                <td colspan="1">
+                    <textarea name="superviseWorker" rows="2" cols="20" id="superviseWorker" class="input" style="height:30px;width:80%;"></textarea>
+                </td>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="projectInfo1" cellpadding="0" cellspacing="1" style="margin-top: -1px;height:41%;">
+            <tr>
+                <th style="width: 15%;">
+                    建设单位
+                </th>
+                <td style="width: 35%;">
+                    <textarea name="buildCompany" rows="2" cols="20" id="buildCompany" class="input" style="height:55px;width:80%;"></textarea>
+                </td>
+                <td style="width: 50%;">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <!--                         <tr> -->
+                        <!--                             <th style="width: 15%; background-color: #fff2ec;"> -->
+                        <!--                                 负责人 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="buildLeaderName" type="text" maxlength="20" id="buildLeaderName" class="input" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                             <th style="width: 15%; background-color: #fff2ec;"> -->
+                        <!--                                 电话 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="buildLeaderPhone" type="text" maxlength="20" id="buildLeaderPhone" class="input inputTel" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                         </tr> -->
+                        <tr>
+                            <th style="width: 25%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 50%">
+                                <label id="buildContactName" class="input" style="width:99%;"></label>
+                            </td>
+                            <td style="width: 16%;text-align:center;">
+                                <a id="addBuildName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp添加&nbsp</a>
+                                <a id="deleteBuildName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-remove"></i>&nbsp删除&nbsp</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%;">
+                    设计单位
+                </th>
+                <td style="width: 35%;">
+                    <textarea name="designCompany" rows="2" cols="20" id="designCompany" class="input" style="height:55px;width:80%;"></textarea>
+                </td>
+                <td style="width: 50%;">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <!--                         <tr> -->
+                        <!--                             <th style="width: 15%; background-color: #fff2ec;"> -->
+                        <!--                                 负责人 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="designLeaderName" type="text" maxlength="20" id="designLeaderName" class="input" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                             <th style=" width: 15%;background-color: #fff2ec;"> -->
+                        <!--                                 电话 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="designLeaderPhone" type="text" maxlength="20" id="designLeaderPhone" class="input inputTel" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                         </tr> -->
+                        <tr>
+                            <th style="width: 25%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 50%">
+                                <label id="designContactName" class="input" style="width:99%;"></label>
+                            </td>
+                            <td style="width: 16%;text-align:center;">
+                                <a id="addDesignName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp添加&nbsp</a>
+                                <a id="deleteDesignName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-remove"></i>&nbsp删除&nbsp</a>
+                            </td>
+                            <!--                             <th style=" width: 15%;background-color: #fff2ec;"> -->
+                            <!--                                 电话 -->
+                            <!--                             </th> -->
+                            <!--                             <td style="width: 35%"> -->
+                            <!--                                 <input name="designContactPhone" type="text" maxlength="20" id="designContactPhone" class="input inputTel" style="width:80%;" /> -->
+                            <!--                             </td> -->
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%;">
+                    施工单位
+                </th>
+                <td style="width: 35%;">
+                    <textarea name="constructCompany" rows="2" cols="20" id="constructCompany" class="input" style="height:55px;width:80%;"></textarea>
+                </td>
+                <td style="width: 50%;">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1">
+                        <!--                         <tr> -->
+                        <!--                             <th style="width: 15%;background-color: #fff2ec;"> -->
+                        <!--                                 负责人 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="constructLeaderName" type="text" maxlength="20" id="constructLeaderName" class="input" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                             <th style="width: 15%;background-color: #fff2ec;"> -->
+                        <!--                                 电话 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="constructLeaderPhone" type="text" maxlength="20" id="constructLeaderPhone" class="input inputTel" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                         </tr> -->
+                        <tr>
+                            <th style="width: 25%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 50%">
+                                <label id="constructContactName" class="input" style="width:99%;"></label>
+                            </td>
+                            <td style="width: 16%;text-align:center;">
+                                <a id="addConstructName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp添加&nbsp</a>
+                                <a id="deleteConstructName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-remove"></i>&nbsp删除&nbsp</a>
+                            </td>
+                            <!--                             <th style=" width: 15%;background-color: #fff2ec;"> -->
+                            <!--                                 电话 -->
+                            <!--                             </th> -->
+                            <!--                             <td style="width: 35%"> -->
+                            <!--                                 <input name="constructContactPhone" type="text" maxlength="20" id="constructContactPhone" class="input inputTel" style="width:80%;" /> -->
+                            <!--                             </td> -->
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%;">
+                    监理单位
+                </th>
+                <td style="width: 35%;">
+                    <textarea name="supervisorCompany" rows="2" cols="20" id="supervisorCompany" class="input" style="height:55px;width:80%;"></textarea>
+                </td>
+                <td style="width: 50%;">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <!--                         <tr> -->
+                        <!--                             <th style="width: 15%;background-color: #fff2ec;"> -->
+                        <!--                                 负责人 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="supervisorLeaderName" type="text" maxlength="20" id="supervisorLeaderName" class="input" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                             <th style="width: 15%;background-color: #fff2ec;"> -->
+                        <!--                                 电话 -->
+                        <!--                             </th> -->
+                        <!--                             <td style="width: 35%"> -->
+                        <!--                                 <input name="supervisorLeaderPhone" type="text" maxlength="20" id="supervisorLeaderPhone" class="input inputTel" style="width:80%;" /> -->
+                        <!--                             </td> -->
+                        <!--                         </tr> -->
+                        <tr>
+                            <th style="width: 25%;background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 50%">
+                                <label id="supervisorContactName" class="input" style="width:99%;"></label>
+                            </td>
+                            <td style="width: 16%;text-align:center;">
+                                <a id="addSupervisorName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp添加&nbsp</a>
+                                <a id="deleteSupervisorName" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-remove"></i>&nbsp删除&nbsp</a>
+                            </td>
+                            <!--                             <th style="width: 15%;background-color: #fff2ec;"> -->
+                            <!--                                 电话 -->
+                            <!--                             </th> -->
+                            <!--                             <td style="width: 35%"> -->
+                            <!--                                 <input name="supervisorContactPhone" type="text" maxlength="20" id="supervisorContactPhone" class="input inputTel" style="width:80%;" /> -->
+                            <!--                             </td> -->
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="3">
+                    <button type="button" id="saveBtn" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp清空</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+    </form>
+    <div id="mapDialog" class="easyui-dialog" data-options="title:'查找地址',closable:true,resizable:true">
+    <table id="tableHeader" cellpadding="0" cellspacing="0" style="width:100%;z-index:30;position:absolute;">
+            <tr>
+                <th>
+                    输入地点：&nbsp&nbsp<input name="suggestId" id="suggestId"  style="color:#000;width:240px;height:25px;line-height:25px;z-index:30;position:absolute;"></input>
+                </th>
+            </tr>
+     </table>
+    
+	<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:250px;display:none;"></div>
+    <div class="fitParent" style="padding-top:100px;" id="projectMap"></div>
+    </div>
+    <!--添加联系人弹出框 -->
+    <div id="addNameDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="nameForm">
+                            <input id="addType" type="hidden">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th id="nameTitle">
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="addNameTab" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        联系人：
+                                    </th>
+                                    <td colspan="2" id="textList" style="text-align:center">
+                                        <input name="addNameInput" type="text" id="addNameInput" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        电话：
+                                    </th>
+                                    <td colspan="2" id="textList" style="text-align:center">
+                                        <input name="addPhoneInput" type="text" id="addPhoneInput" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3">
+                                        <button type="button" id="addNameBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-share"></i>&nbsp确定</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="canceladdNameBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--修改联系人弹出框 -->
+    <div id="deleteNameDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="deleteForm">
+                            <input id="deleteType" type="hidden">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th id="deleteTitle">
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="deleteNameTab" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        联系人：
+                                    </th>
+                                    <td colspan="2" id="deleteList" style="text-align:center">
+                                        <input name="deleteNameInput" type="text" id="deleteNameInput" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3">
+                                        <button type="button" id="deleteNameBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-share"></i>&nbsp确定</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelDeleteNameBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--添加监测人员弹出框 -->
+    <div id="chooseNameDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="chooseMonitor-modal" style="width:400px;">
+            <div class="modal-content" style="height:100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="tableListTitle" style="margin-top:4px;">
+                            选择监测人员
+                        </div>
+                        <table id="monitorWorkerDG">
+                        </table>
+                        <p style="margin:5px 3px;float:right;">
+                            <button type="button" id="saveMonitorWorkerBtn" class="btn btn-xs btn-success">
+                                <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--删除监测人员弹出框 -->
+    <div id="deleteWorkerDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="deleteMonitor-modal" style="width:400px;">
+            <div class="modal-content" style="height:100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="tableListTitle" style="margin-top:4px;">
+                            删除监测人员
+                        </div>
+                        <table id="deleteWorkerDG">
+                        </table>
+                        <p style="margin:5px 3px;float:right;">
+                            <button type="button" id="saveDeleteWorkerBtn" class="btn btn-xs btn-success">
+                                <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/smosplat/common/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/mapProjectList.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=w0gvXYvFYD842phtrIRR1cWQvrfZLgsk"></script>
+    <script type="text/javascript" src="/smosplat/common/js/PerfectLoad.js"></script>
+    <title>Insert title here</title>
+</head>
+
+<body class="easyui-layout" id="monitorBody">
+    <!-- 所有项目的地图 -->
+    <div class="easyui-layout fitParent">
+        <div class="fitParent" id="map"></div>
+    </div>
+    <div class="floatWinRight" style="z-index: 30; position:absolute; top: 60px; right: 60px;background-color:white;">
+        <table id="tableHeader" cellpadding="0" cellspacing="0">
+            <tr>
+                <th>
+                    搜索结果
+                </th>
+            </tr>
+        </table>
+        <table id="projectListDG"></table>
+    </div>
+    <div id="workerToolbar" style="height:22px;float:right;margin:3px 3px;z-index: 30; position: absolute; top: 20px; right: 60px;">
+        <div style="line-height: 22px;vertical-align: middle;">
+        <a id="organBtn" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-info-sign"></i>&nbsp机构管理</a>
+        <a id="addProjectBtn" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp增加工程</a>
+            <a id="projectBtn" class="btn btn-info btn-xs"><i class="glyphicon glyphicon-list"></i>&nbsp工程列表</a>
+            <input id="filterProjectInput" class="input"  style="width:180px;">
+            <a id="filterProjectBtn" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-search"></i>&nbsp查询</a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>基坑3.0-组织机构</title>
+    <meta name="keywords" content="基坑3.0">
+    <!--[if lt IE 8]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/fileinput.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <style>
+    .selected {
+        background: #39aef5;
+        color: #fff
+    }
+    span {
+        color: #fff;
+    }
+    </style>
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation" style="background: url(/smosplat/organ/image/login-bg.png) repeat-x">
+            <div class="nav-close"><i class="glyphicon glyphicon-remove-sign"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span><img alt="image" class="img-circle" src="/smosplat/organ/image/admin.png" /></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                <span class="block m-t-xs"><strong class="font-bold">欢迎！</strong></span>
+                                <span class="text-muted text-xs block" id="workerInfo"></span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">smos
+                        </div>
+                    </li>
+                    <li>
+                        <a href="" class="J_menuItem" id="organMgr"><i class="glyphicon glyphicon-globe"></i><span class="nav-label">机构信息</span></a>
+                    </li>
+                    <li>
+                        <a href="" class="J_menuItem" id="workerMgr"><i class="glyphicon glyphicon-user"></i><span class="nav-label">人员信息</span></a>
+                    </li>
+                    <li>
+                        <a href="" class="J_menuItem" id="deviceMgr"><i class="glyphicon glyphicon-tags"></i><span class="nav-label">常规设备管理</span></a>
+                    </li>
+                    <li>
+                        <a href="" class="J_menuItem" id="autoDeviceMgr"><i class="glyphicon glyphicon-glass"></i><span class="nav-label">自动设备管理</span></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div id="headerArea">
+                <div class="row border-bottom">
+                    <nav class="navbar-static-top" role="navigation" style="margin-bottom: 0;margin-top:30px;">
+                    </nav>
+                </div>
+                <div class="row content-tabs">
+                    <button class="roll-nav roll-left J_tabLeft"><i class="glyphicon glyphicon-backward"></i>
+                    </button>
+                    <nav class="page-tabs J_menuTabs">
+                        <div class="page-tabs-content">
+                            <a href="javascript:;" id="nowTime" class="active J_menuTab" data-id="0"></a>
+                        </div>
+                    </nav>
+                    <div class="roll-nav roll-right J_tabCenter">
+                        <a id="toRoleBtn" href="#" onclick="window.location.href='/smosplat/role'" class="userInfoText" data-options="plain:true">角色权限设置</a>
+                        <img style="vertical-align: middle;" src="common/image/sound.png" />&nbsp;
+                        <label class="userInfoText">欢迎：</label>
+                        <label id="userName" style="color: #71BDE1; font-weight: bold;"></label>
+                        <img style="vertical-align: middle;" src="common/image/user_info_fg.png" />
+                        <button data-target="#modifyPWDialog" data-toggle="modal" class="userInfoText" id="changeUser" style="width: 105px;"> 修改个人信息 </button>
+                        <img style="vertical-align: middle;" src="common/image/user_info_fg.png" />
+                    </div>
+                    <a href="#" id="indexMgr"  class="roll-nav roll-right J_tabBack"><i class="glyphicon glyphicon-circle-arrow-left"></i> 返回工程列表</a>
+                    <a href="#" onclick="back2Login()" class="roll-nav roll-right J_tabExit"><i class="glyphicon glyphicon-log-out"></i> 退出</a>
+                </div>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <iframe class="J_iframe" id="J_iframe" name="iframe0" width="100%" height="100%" frameborder="0" data-id="0" seamless></iframe>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+        <!-- 修改密码模态框 -->
+    </div>
+    <div id="modifyPWDialog" class="modal fade" aria-hidden="true" style="margin-top:100px" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">修改个人信息</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!--                         <form id="modifyPWForm"> -->
+                        <div class="col-md-12 col-lg-12">
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <div class="form-group">
+                                    <div id="localImage">
+                                        <img id="portrait" class="img-responsive img-rounded previewImage" alt="照片" aria-required="true">
+                                    </div>
+                                    <a id="portraitUpload" href="#" style="display:block;text-align:center;line-height: 20px;font-size:15px">上传照片</a>
+                                    <form action="uploadWorkerFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="portraitForm">
+                                        <input id="portrait_input" class="input" value="portrait" name="file" type="file" data-show-preview="false" style="display:none">
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 col-md-8 col-lg-8">
+                                <div class="form-group">
+                                    <label>密码：</label>
+                                    <input class="form-control" placeholder="请输入新密码" type="password" id="newPassword" name="newPassword" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>确认密码：</label>
+                                    <input class="form-control" placeholder="请确认新密码" type="password" id="confirmPassword" name="confirmPassword" required="" aria-required="true">
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label>昵称：</label>
+                                    <input class="form-control" placeholder="请输入账号名" type="text" id="accountName" name="accountName" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>电话：</label>
+                                    <input class="form-control" placeholder="请输入电话" type="text" id="phone" name="phone" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>邮箱：</label>
+                                    <input class="form-control" placeholder="请输入邮箱" type="text" id="email" name="email" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>上岗证号：</label>
+                                    <input class="form-control" placeholder="请输入上岗证号" type="text" id="paperID" name="paperID" required="" aria-required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <!--                         </form> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="modifyPwBtn" onclick="modifyPw()" class="btn btn-sm btn-info" name="signup">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp;确定</strong>
+                    </button>
+                    <button type="button" id="cancelmodifyPwBtn" class="btn btn-sm btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp;取消</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/smosplat/organ/js/organIndex.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/smosplat/common/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/smosplat/common/js/plugins/layer/layer.min.js"></script>
+    <script src="/smosplat/common/js/contabs.min.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput_locale_zh.js"></script>
+    <script src="/smosplat/common/js/uploadUtil.js"></script>
+    <script src="/smosplat/common/js/util.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人员账户</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script src="/smosplat/common/js/plugins/peity/jquery.peity.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <!-- 时间控件 -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/organ/js/worker.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=w0gvXYvFYD842phtrIRR1cWQvrfZLgsk"></script>
+    <script src="/smosplat/common/js/uploadUtil.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/dropDown/jquery.dropdown.js"></script>
+    <style>
+    body,
+    li,
+    ul {
+        margin: 0;
+        padding: 0;
+        font-size: 13px;
+    }
+
+    li,
+    ul {
+        list-style: none;
+    }
+
+    .triangle {
+        width: 0;
+        height: 0;
+        border-left: 50px solid red;
+        border-bottom: 50px solid blue;
+        border-top: 50px solid black;
+        border-right: 50px solid purple
+    }
+
+    .w-dropdown {
+        width: 160px;
+        float:left;
+    }
+
+    
+    .w-dropdown .dropdown-sel {
+        width: 150px;
+        height: 20px;
+        line-height: 20px;
+        display: block;
+        color: #fff;
+        cursor: pointer;
+        font-style: normal;
+        padding-left: 4px;
+        padding-right: 5px;
+        border: 1px solid #cfd6d9;
+        outline: line;
+    }
+
+    .w-dropdown .dropdown-sel:focus {
+        outline: none;
+    }
+
+    .w-dropdown .dropdown-sel:hover {
+        border: 1px solid #abb9c2;
+    }
+
+    .w-dropdown ul {
+        width: 150px;
+        border: 1px solid #c0c5cc;
+        background-color: #ffffff;
+        position: absolute;
+        z-index: 20000;
+        margin-top: -1px;
+        display: none;
+        height: 400px;
+        overflow: auto;
+    }
+
+    .w-dropdown ul li a {
+        display: block;
+        color: #999;
+        text-decoration: none;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .w-dropdown ul li a:hover {
+        color: #333;
+        background-color: #f0f0f0;
+    }
+
+    .w-dropdown ul li a.hover {
+        color: #333;
+        background-color: #f0f0f0;
+    }
+    </style>
+    <script type="text/javascript">
+    $(function() {
+        $('#gpsBeginTime').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd 00:00:00',
+            weekStart: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            todayBtn: 1,
+            startView: 2,
+            minView: 2,
+            endDate: new Date(),
+            forceParse: 0,
+            pickerPosition: "bottom-right"
+        });
+        $('#gpsEndTime').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd 23:59:59',
+            weekStart: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            todayBtn: 1,
+            startView: 2,
+            minView: 2,
+            endDate: new Date(),
+            forceParse: 0,
+            pickerPosition: "bottom-right"
+        });
+        $("#addWorkerForm").validate({
+            onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $("#loginGroup").validate({
+            onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $("#updateWorkerForm").validate({
+            onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $("#updateAccountForm").validate({
+            onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $("#updateAccountForm1").validate({
+            onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+    })
+    </script>
+</head>
+
+<body class="gray-bg easyui-layout" id="monitorBody">
+    <div data-options="region:'north'" style="width:100%;height:56px;padding:0 10px;">
+        <p style="margin-top:10px;float:left">
+            <a data-toggle="modal" class="btn btn-info" id="addWorkerBtn"><i class="glyphicon glyphicon-plus"></i>&nbsp增加人员</a>
+        </p>
+        <div id="workerToolbar" style="height:34px;float:left;margin:10px 3px;">
+            <div style="line-height: 33px;vertical-align: middle;">
+                <label>根据机构进行过滤：</label>
+                <input id="filterOrgans" class="easyui-combobox" data-options="valueField:'organUuid',textField:'organName',editable:false" style="width:200px;">
+                <a id="filterByOrganBtn" class="btn btn-danger btn-xs" iconCls="icon-search"><i class="glyphicon glyphicon-search"></i>&nbsp过滤</a>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="float:right;width:55%; margin:7px 0;">
+            <li class="active">
+                <a data-toggle="tab" href="#tab-1"><i class="glyphicon glyphicon-user"></i>人员列表</a>
+            </li>
+        </ul>
+    </div>
+    <div data-options="region:'center'" id="jqGrid_worker" style="padding:0 10px;">
+        <table id="workerDG"></table>
+        <div id="pager_workerDG"></div>
+    </div>
+    <!-- 增加人员模态框 -->
+    <div id="addWorkerDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">增加人员</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- 头像上传form -->
+                        <form action="uploadWorkerFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="portraitForm">
+                            <input id="portrait_input" class="input" value="portrait" name="file" type="file" data-show-preview="false" style="display:none">
+                        </form>
+                        <!-- 上岗证书上传form -->
+                        <form action="uploadWorkerFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="paperIDForm">
+                            <input id="paperID_input" class="input" value="paperID" name="file" type="file" data-show-preview="false" style="display:none">
+                        </form>
+                        <form id="addWorkerForm" onsubmit="return false;">
+                            <div class="col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label>人员名称：</label>
+                                    <input class="form-control" placeholder="请输入人员名称" type="text" id="workerName" name="workerName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>职务：</label>
+                                    <input class="form-control" placeholder="请输入职务" type="text" id="duty" name="duty" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label>性别：</label>
+                                    <input class="form-control" placeholder="请输入人员性别" type="text" id="sex" name="sex" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>职称：</label>
+                                    <input class="form-control" placeholder="请输入职称" type="text" id="jobTitle" name="jobTitle" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label>职称专业：</label>
+                                    <input class="form-control" placeholder="请输入职称专业" type="text" id="titleMajor" name="titleMajor" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3" id="portraitDIV">
+                                <div class="form-group">
+                                    <img id="portrait" class="img-responsive img-rounded previewImage" alt="照片" aria-disabled="true" />
+                                    <a id="portraitUpload" class="glyphicon glyphicon-upload" style="color:red">上传</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>身份证号：</label>
+                                    <input class="form-control" placeholder="请输入身份证号" type="text" id="idNumber" name="idNumber" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>检测鉴定工作资历(年)：</label>
+                                    <input class="form-control" placeholder="请输入检测鉴定工作资历" type="text" id="workYear" name="workYear" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>手机号码：</label>
+                                    <input class="form-control" placeholder="请输入手机号码" type="text" id="phone" name="phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>学历：</label>
+                                    <input class="form-control" placeholder="请输入学历" type="text" id="education" name="education" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label>何时/何校/何专业毕业:</label>
+                                    <input class="form-control" placeholder="请输入何时/何校/何专业毕业" type="text" id="graduationInfo" name="graduationInfo" required>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-lg-1">
+                                <div class="form-group">
+                                    <label>工作简历:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-lg-2">
+                                <div class="form-group">
+                                    <label>起止年月:</label>
+                                    <input class="form-control" placeholder="1980-01-01" type="text" id="resumePeriod1" name="resumePeriod1">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="1980-01-01" type="text" id="resumePeriod2" name="resumePeriod2">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="1980-01-01" type="text" id="resumePeriod3" name="resumePeriod3">
+                                </div>
+                            </div>
+                            <div class="col-md-9 col-lg-9">
+                                <div class="form-group">
+                                    <label>在何单位、从事何工作、任何职务:</label>
+                                    <input class="form-control" placeholder="请输入单位、工作、职务" type="text" id="resume1" name="resume1">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="请输入单位、工作、职务" type="text" id="resume2" name="resume2">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="请输入单位、工作、职务" type="text" id="resume3" name="resume3">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label style="float:left">上岗证编号(jpg,png,pdf)：</label>
+                                    <a id="uploadPaperID" style="float:left;color:red" class="glyphicon glyphicon-upload">上传</a>
+                                    <!--                                    <a  id="new_viewPaperID" style="float:left;margin-left:5px" class="glyphicon glyphicon-search">查看</a> -->
+                                    <input class="form-control" placeholder="请输入上岗证编号" type="text" id="paperID" name="paperID" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>注册类型：</label>
+                                    <input class="form-control" placeholder="请输入注册类型" type="text" id="registerdType" name="registerdType" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>执业专用章号：</label>
+                                    <input class="form-control" placeholder="请输入执业专用章号" type="text" id="characterId" name="characterId" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>注册证书编号：</label>
+                                    <input class="form-control" placeholder="请输入注册证书编号" type="text" id="registerdPaperId" name="registerdPaperId" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">人员类型</div>
+                                <div class="form-group">
+                                    <label class="radio">
+                                        <input id="isIspector" type="radio" name="workerType" value="监测人"> 监测人
+                                    </label>
+                                    <label class="radio">
+                                        <input id="isWriter" type="radio" name="workerType" value="报告填写人"> 报告填写人
+                                    </label>
+                                    <label class="radio">
+                                        <input id="isAuditor" type="radio" name="workerType" value="报告审核人"> 报告审核人
+                                    </label>
+                                    <label class="radio">
+                                        <input id="isApprover" type="radio" name="workerType" value="报告批准人"> 报告批准人
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">是否指定一个账号？</div>
+                                <div class="form-group">
+                                    <label class="radio-inline">
+                                        <input id="hasAccount" type="radio" name="Account" value="hasAccount"> 指定
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input id="noAccount" type="radio" name="Account" value="noAccount"> 不指定
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="col-md-12 col-lg-12">
+                            <form id="loginGroup" onsubmit="return false;" style="display:none;">
+                                <div class="form-group">
+                                    <label>登录名：</label>
+                                    <input class="form-control" placeholder="请输入登录名" type="text" id="loginName" name="loginName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>姓名:</label>
+                                    <input class="form-control" placeholder="请输入姓名" type="text" id="accountName" name="accountName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>登录密码：</label>
+                                    <input class="form-control" placeholder="请输入密码" type="password" id="password" name="password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>确认密码：</label>
+                                    <input class="form-control" placeholder="请确认密码" type="password" id="password1" name="password1" required>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="saveWorkerBtn" class="btn btn-sm btn-info">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" id="cancelupdateWorkerBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--     修改人员 -->
+    <div id="updateWorkerDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">修改人员</h3>
+                </div>
+                <form action="uploadWorkerFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="changePortraitForm">
+                    <input id="changePortrait_input" class="input" value="portrait" name="file" type="file" data-show-preview="false" style="display:none">
+                </form>
+                <form action="uploadWorkerFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="changePaperIDForm">
+                    <input id="changePaperID_input" class="input" value="paperID" name="file" type="file" data-show-preview="false" style="display:none">
+                </form>
+                <div class="modal-body">
+                    <div class="row">
+                        <input id="updateWorkerUuid" type="hidden">
+                        <div class="col-md-12 col-lg-12">
+                            <form id="updateWorkerForm" onsubmit="return false;">
+                                <div class="col-md-3 col-lg-3">
+                                    <div class="form-group">
+                                        <label>人员名称：</label>
+                                        <input class="form-control" placeholder="请输入人员名称" type="text" id="updateWorkerName" name="updateWorkerName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>职务：</label>
+                                        <input class="form-control" placeholder="请输入职务" type="text" id="updateDuty" name="updateDuty">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-lg-3">
+                                    <div class="form-group">
+                                        <label>性别：</label>
+                                        <input class="form-control" placeholder="请输入人员性别" type="text" id="updateSex" name="updateSex">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>职称：</label>
+                                        <input class="form-control" placeholder="请输入职称" type="text" id="updateTitle" name="updateTitle">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-lg-3">
+                                    <div class="form-group">
+                                        <label>职称专业：</label>
+                                        <input class="form-control" placeholder="请输入职称专业" type="text" id="updateTitleMajor" name="updateTitleMajor">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>身份证号：</label>
+                                        <input class="form-control" placeholder="请输入身份证号" type="text" id="updateIdNumber" name="updateIdNumber">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-lg-3" id="updatePortraitDIV">
+                                    <img id="changePortrait" class="img-responsive img-rounded previewImage" alt="照片" aria-disabled="true" />
+                                    <a id="changePortraitUpload" class="glyphicon glyphicon-upload" style="color:red">上传</a>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label>检测鉴定工作资历(年)：</label>
+                                        <input class="form-control" placeholder="请输入检测鉴定工作资历" type="text" id="updateWorkYear" name="updateWorkYear">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>何时/何校/何专业毕业:</label>
+                                        <input class="form-control" placeholder="请输入何时/何校/何专业毕业" type="text" id="updateGraduationInfo" name="updateGraduationInfo">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label>手机号码：</label>
+                                        <input class="form-control" placeholder="请输入手机号码" type="text" id="updatePhone" name="updatePhone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>学历：</label>
+                                        <input class="form-control" placeholder="请输入学历" type="text" id="updateEducation" name="updateEducation">
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-lg-1">
+                                    <div class="form-group">
+                                        <label>工作简历:</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label>起止年月:</label>
+                                        <input class="form-control" placeholder="1980-01-01" type="text" id="updateResumePeriod1" name="updateResumePeriod1">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" placeholder="1980-01-01" type="text" id="updateResumePeriod2" name="updateResumePeriod2">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" placeholder="1980-01-01" type="text" id="updateResumePeriod3" name="updateResumePeriod3">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 col-lg-7">
+                                    <div class="form-group">
+                                        <label>在何单位、从事何工作、任何职务:</label>
+                                        <input class="form-control" placeholder="请输入单位、工作、职务" type="text" id="updateResume1" name="updateResume1">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" placeholder="请输入单位、工作、职务" type="text" id="updateResume2" name="updateResume2">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" placeholder="请输入单位、工作、职务" type="text" id="updateResume3" name="updateResume3">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label style="float:left">上岗证编号：</label>
+                                        <a id="uploadPaperID_update" style="float:left;color:red" class="glyphicon glyphicon-upload">上传</a>
+                                        <a id="u_viewPaperID" style="float:left;margin-left:5px" class="glyphicon glyphicon-search">查看</a>
+                                        <input class="form-control" placeholder="请输入上岗证编号" type="text" id="updatePaperID" name="updatePaperID">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>注册类型：</label>
+                                        <input class="form-control" placeholder="请输入注册类型" type="text" id="updateRegisterdType" name="updateRegisterdType">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label>执业专用章号：</label>
+                                        <input class="form-control" placeholder="请输入执业专用章号" type="text" id="updateCharacterId" name="updateCharacterId">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>注册证书编号：</label>
+                                        <input class="form-control" placeholder="请输入注册证书编号" type="text" id="updateRegisterdPaperId" name="updateRegisterdPaperId">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="form-group">人员类型</div>
+                                    <div class="form-group">
+                                        <label class="radio">
+                                            <input id="updateIspector" type="radio" name="updateWorkerType" value="监测人"> 监测人
+                                        </label>
+                                        <label class="radio">
+                                            <input id="updateIsWriter" type="radio" name="updateWorkerType" value="报告填写人"> 报告填写人
+                                        </label>
+                                        <label class="radio">
+                                            <input id="updateIsAuditor" type="radio" name="updateWorkerType" value="报告审核人"> 报告审核人
+                                        </label>
+                                        <label class="radio">
+                                            <input id="updateIsApprover" type="radio" name="updateWorkerType" value="报告批准人"> 报告批准人
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="form-group">
+                                        <label style="color:red">(上岗证格式：jpg,jpeg,png,pdf)</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="updateWorkerBtn" class="btn btn-sm btn-info">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" id="cancelupdateAccountBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--     修改账户信息 -->
+    <div id="updateAccountDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">修改账户信息</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <input id="updateAccountUuid" type="hidden">
+                        <form id="updateAccountForm" onsubmit="return false;">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label>登录名称：</label>
+                                    <input class="form-control" placeholder="请输入人员名称" type="text" id="updateLoginName" name="workerName" required>
+                                </div>
+                                <div class="form-group" type="hidden">
+                                    <label>账号姓名：</label>
+                                    <input class="form-control" placeholder="请输入人员姓名" type="text" id="updateAccountName" name="phone" required>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="form_title">
+                            <input id="resetPassword" style="width:50px;" type="checkbox">是否重置密码？</div>
+                        <div class="col-md-12 col-lg-12">
+                            <form id="updateAccountForm1" onsubmit="return false;" style="display: none;">
+                                <div class="form-group">
+                                    <label>新密码：</label>
+                                    <input class="form-control" placeholder="请输入新密码" type="password" id="updatePassword" name="updatePassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>确认密码:：</label>
+                                    <input class="form-control" placeholder="请确认新密码" type="password" id="updatePassword1" name="updatePassword1" required>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="updateAccountBtn" class="btn btn-sm btn-info">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 查看个人信息模态框 -->
+    <div id="workerInfoDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">查看个人信息</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label>人员名称：</label>
+                                    <input class="form-control" type="text" id="viewWorkerName" name="viewWorkerName" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>登录名：</label>
+                                    <input class="form-control" type="text" id="viewLoginName" name="viewLoginName" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>职务：</label>
+                                    <input class="form-control" type="text" id="viewDuty" name="viewDuty" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label>性别：</label>
+                                    <input class="form-control" type="text" id="viewSex" name="viewSex" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>权限等级：</label>
+                                    <input class="form-control" type="text" id="viewRoleName" name="viewRoleName" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>职称：</label>
+                                    <input class="form-control" type="text" id="viewTitle" name="viewTitle" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label>姓名：</label>
+                                    <input class="form-control" type="text" id="viewAccountName" name="viewAccountName" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>职称专业：</label>
+                                    <input class="form-control" type="text" id="viewTitleMajor" name="viewTitleMajor" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>身份证号：</label>
+                                    <input class="form-control" type="text" id="viewIdNumber" name="viewIdNumber" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <img id="viewPortrait" class="img-responsive img-rounded previewImage" alt="照片" aria-disabled="true">
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>检测鉴定工作资历(年)：</label>
+                                    <input class="form-control" type="text" id="viewWorkYear" name="viewWorkYear" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>何时/何校/何专业毕业:</label>
+                                    <input class="form-control" type="text" id="viewGraduationInfo" name="viewGraduationInfo" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>手机号码：</label>
+                                    <input class="form-control" type="text" id="viewPhone" name="viewPhone" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>学历：</label>
+                                    <input class="form-control" type="text" id="viewEducation" name="viewEducation" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-lg-1">
+                                <div class="form-group">
+                                    <label>工作简历:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-lg-4">
+                                <div class="form-group">
+                                    <label>起止年月:</label>
+                                    <input class="form-control" type="text" id="viewResumePeriod1" name="viewResumePeriod1" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="viewResumePeriod2" name="viewResumePeriod2" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="viewResumePeriod3" name="viewResumePeriod3" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-7 col-lg-7">
+                                <div class="form-group">
+                                    <label>在何单位、从事何工作、任何职务:</label>
+                                    <input class="form-control" type="text" id="viewResume1" name="viewResume1" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="viewResume2" name="viewResume2" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="viewResume3" name="viewResume3" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label style="float: left">上岗证编号：</label> <a id="v_viewPaperID" style="float: left" class="glyphicon glyphicon-search">查看</a>
+                                    <input class="form-control" type="text" id="viewPaperID" name="viewPaperID" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>注册类型：</label>
+                                    <input class="form-control" type="text" id="viewRegisterdType" name="viewRegisterdType" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>执业专用章号：</label>
+                                    <input class="form-control" type="text" id="viewCharacterId" name="viewCharacterId" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>注册证书编号：</label>
+                                    <input class="form-control" type="text" id="viewRegisterdPaperId" name="viewRegisterdPaperId" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label>人员类型：</label>
+                                    <input class="form-control" type="text" id="viewWorkerType" name="viewWorkerType" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancelmodifyPwBtn" class="btn btn-sm btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp;关闭</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 设置访客账户可查看工程模态框 -->
+    <div id="setProjectDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="project-modal" style="width:400px;">
+            <div class="modal-content" style="height:100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="tableListTitle" style="margin-top:3px;">
+                            设置可查看工程
+                        </div>
+                        <table id="projectDG">
+                        </table>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" id="checkProjectBtn" class="btn btn-xs btn-info">
+                                <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 查看人员的GPS轨迹模态框 -->
+    <div id="viewGPSDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="gps-modal">
+            <div class="modal-content" style="height:100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- 所有项目的地图 -->
+                        <div class="fitParent">
+                            <div class="fitParent" id="gpsMap"></div>
+                        </div>
+                        <div class="floatWinRight" style="width: 250px;z-index: 30; position:absolute; top: 50px; left: 80px;background-color:white;">
+                            <div class="tableListTitle3" style="margin-top:3px;display: none;height:auto;word-break:break-all;">
+
+                            </div>
+                            <table id="gpsListDG"></table>
+                        </div>
+                        <div id="workerToolbar" style="height:22px;float:left;margin:3px 3px;z-index: 30; position: absolute; top: 20px; left: 80px;">
+                            <div style="line-height: 22px;vertical-align: middle;">
+                                <input class="btn btn-xs btn-success" id="gpsBeginTime" placeholder="初始日期" style="height:20px;width:125px;text-align:center;float:left;margin-right:8px;" size="12" data-options="required:true" value="" readonly>
+                                <input class="btn btn-xs btn-success" id="gpsEndTime" placeholder="结束日期" style="height:20px;width:125px;text-align:center;float:left;margin-right:8px;" size="12" data-options="required:true" value="" readonly>
+                                <div class="w-dropdown J_dropdown">
+                                    <input class="getProjectUuid" style="display:none;">
+                                    <input class="btn-success btn btn-xs dropdown-sel" value="请选择工程" readonly >
+                                    <ul class="dropdown-option">
+                                    </ul>
+                                </div>
+                                <a id="getGPSInfoBtn" style="height:20px;" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-search" ></i>&nbsp查询</a>
+                            </div>
+                        </div>
+                        <button type="button" style="display:block;margin:2px auto;" class="btn btn-xs btn-success" id="canceGpsBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

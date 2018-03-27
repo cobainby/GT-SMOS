@@ -1,0 +1,65 @@
+.main_left{
+	width: 180px;
+	height:100%;
+	background-image: url("../image/main_left_bg.png");
+	overflow:  hidden;
+}
+.menu_header,.menu_header_sel,.menu_item,.menu_item_sel{
+	width:180px;
+	height: 35px;
+	cursor:pointer;
+	line-height:35px;
+	text-align:center;
+	vertical-align:middle;
+	color:#235E72;
+	font-size:14px;
+	font-weight:bold;
+	background-image: url("../image/menu_title_bg_sel.png");
+}
+.menu_header_sel{
+	background-image: url("../image/menu_title_bg_sel.png");
+}
+.menu_item,.menu_item_sel{
+	height:32px;
+	line-height:32px;
+	font-size:12px;
+	background-image: url("../image/menu_item_bg.png");
+}
+.menu_item_sel{
+	width:186px;
+	background-image: url("../image/menu_item_bg_sel.png");
+}
+.form_title{
+	font-size:14px;
+	font-weight:bold;
+	color:#666;
+	padding:5px 0;
+	margin-bottom:10px;
+	border-bottom:1px solid #ccc;
+}
+.form_item{
+	margin-bottom:20px;
+}
+.form_item label{
+	display:inline-block;
+	width:80px;
+	color:#1888;
+}
+table th{
+	border:solid #add9c0; 
+	border-width:0px 1px 1px 0px; 
+	padding:10px 0px;
+	text-align: center;
+	
+	}
+table td{
+	border:solid #add9c0; border-width:0px 1px 1px 0px; 
+	padding:10px 0px;
+	text-align: center;
+	}
+table{
+	border:solid #add9c0; border-width:1px 0px 0px 1px;
+	}
+.icon-upload{
+	background:url('/smosplat/organ/image/upload.png') no-repeat center center;
+}

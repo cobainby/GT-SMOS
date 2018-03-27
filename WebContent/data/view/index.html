@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>基坑3.0-数据展示</title>
+    <meta name="keywords" content="基坑3.0">
+    <!--[if lt IE 8]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/fileinput.css">
+    <style>
+    .selected {
+        background: #39aef5;
+        color: #fff
+    }
+    .open{
+    display:block;
+    }
+    .close{
+    display:none;
+    }
+    span {
+        color: #fff;
+    }
+    </style>
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation" style="background: url(/smosplat/organ/image/login-bg.png) repeat-x">
+            <div class="nav-close"><i class="glyphicon glyphicon-remove-sign"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span><img alt="image" class="img-circle" src="/smosplat/organ/image/admin.png" /></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                               <span class="block m-t-xs"><strong class="font-bold">欢迎！</strong></span>
+                                <span class="text-muted text-xs block" id="userName1"></span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">smos
+                        </div>
+                    </li>
+                    <li>
+                        <a id="projectMgr">
+                            <i class="glyphicon glyphicon-info-sign"></i>
+                            <span class="nav-label">工程概况</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="programMgr">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            <span class="nav-label">监测方案</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="picMgr">
+                            <i class="glyphicon glyphicon-picture"></i>
+                            <span class="nav-label">监测平面图</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="monitorMgr">
+                            <i class="glyphicon glyphicon-picture"></i>
+                            <span class="nav-label">监测工作量</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="viewData">
+                            <i class="glyphicon glyphicon-stats"></i>
+                            <span class="nav-label">监测数据</span>
+                            <span style="float:right;" class="glyphicon glyphicon-chevron-left"></span>
+                        </a>
+                        <ul id="projectList" class="nav nav-second-level">
+                        </ul>
+                    </li>
+                    <li>
+                        <a id="dateExport">
+                            <i class="glyphicon glyphicon-collapse-up"></i>
+                            <span class="nav-label">日报导出</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="exportData">
+                            <i class="glyphicon glyphicon-share"></i>
+                            <span class="nav-label">周报导出</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div id="headerArea">
+                <div class="row border-bottom">
+                    <nav class="navbar-static-top" role="navigation" style="margin-bottom: 0;margin-top:30px;">
+
+                    </nav>
+                </div>
+                <div class="row content-tabs">
+                    <button class="roll-nav roll-left J_tabLeft"><i class="glyphicon glyphicon-backward"></i>
+                    </button>
+                    <nav class="page-tabs J_menuTabs">
+                        <div class="page-tabs-content">
+                            <a href="javascript:;" id="nowTime" class="active J_menuTab" data-id="0"></a>
+                        </div>
+                    </nav>
+                    <div class="roll-nav roll-right J_tabProj">
+                        <label id="projectName" style="color: #71BDE1; font-weight: bold;"></label>
+                    </div>
+                    <a href="#" id="indexMgr"  class="roll-nav roll-right J_tabBack"><i class="glyphicon glyphicon-circle-arrow-left"></i>返回工程列表</a>
+                    <a href="#" onclick="back2Login()" class="roll-nav roll-right J_tabExit"><i class="glyphicon glyphicon-remove-sign"></i> 退出</a>
+                </div>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <iframe class="J_iframe" id="J_iframe" name="iframe0" width="100%" height="100%" frameborder="0" data-id="0" seamless></iframe>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+        <!-- 修改密码模态框 -->
+    </div>
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="/smosplat/data/js/index.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/smosplat/common/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/smosplat/common/js/plugins/layer/layer.min.js"></script>
+    <script src="/smosplat/common/js/hplus.min.js?v=4.0.0"></script>
+    <script src="/smosplat/common/js/contabs.min.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput_locale_zh.js"></script>
+    <script src="/smosplat/common/js/uploadUtil.js"></script> 
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $.post("getCurrentAccount", function(data, status) {
+            var jsonObj = JSON.parse(data);
+            var account = jsonObj.account;
+            $.post("getWorkerByAccount",{accountUuid:account.accountUuid}, function(data, status) {
+        		var workerT=JSON.parse(data).worker;
+        		 //显示用户名称
+                $("#userName1").text(workerT.workerName+"("+account.role.roleName+")");
+        	})
+        });
+    });
+    </script>
+</body>
+
+</html>

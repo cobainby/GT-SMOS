@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.form.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <!-- 表单验证 -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+<!--     自定义alert -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <!-- 监测方案设置 -->
+    <script type="text/javascript" src="/smosplat/project/js/allMonitorItem/surveyPointSetting.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/allMonitorItem/sectionSetting.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/allMonitorItem/monitorItemParamSetting.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/allMonitorItem/warningSetting.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/projectMonitorItem.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+    th.ui-th-column div {
+        white-space: normal !important;
+        height: auto !important;
+        padding: 0px;
+    }
+    </style>
+    <script type="text/javascript">
+    // 为了适配不同浏览器，弹出框的高度都通过计算得到
+    $(function() {
+        var bodyHeight = $('#monitorBody').height();
+        //设置模态框弹出的表格的高度
+        $("#addMonitor-modal").height(bodyHeight - 100);
+        $("#warning-modal").height(bodyHeight - 100);
+        $("#section-modal").height(bodyHeight - 100);
+        $("#pointSetting-modal").height(bodyHeight - 100);
+        $("#spZCDevice-modal").height(bodyHeight - 120);
+        $("#warningForm").validate({
+            onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $("#sectionForm").validate({
+        	onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $(".surveyPointForm").validate({
+        	onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $(".spDsForm").validate({
+        	onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $(".editSurveyPointForm").validate({
+        	onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        $("#monitorItemSettingForm").validate({
+        	onfocusout: function(element) {
+                $(element).valid();
+            }
+        });
+        
+    });
+    </script>
+</head>
+
+<body class="easyui-layout" id="monitorBody">
+    <div data-options="region:'center',border:false">
+        <div class="easyui-layout fitParent">
+            <div data-options="region:'north',border:false" style="width:100%;height:90px;padding:0 6px;">
+                <table id="tableHeader" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>
+                           	 监测项管理
+                        </th>
+                    </tr>
+                </table>
+                <div class="monitorItemToolbar" style="width:100%;height:40px;margin-top:5px;">
+                    <p style="margin:4px 3px;float:left;">
+                        <a data-toggle="modal" class="btn btn-sm btn-info" id="addMonitorItemBtn" href="#addMonitorItemDialog"><i class="glyphicon glyphicon-plus"></i>&nbsp选择</a>
+<!--                         <a data-toggle="modal" class="btn btn-sm btn-info" id="testBtn" ><i class="glyphicon glyphicon-plus"></i>测试用</a> -->
+                    </p>
+<!--                     <div style="float:left"> -->
+<!--                     <form id="uploadWYSForm" method="post" enctype="multipart/form-data" > -->
+<!--                     	<table> -->
+<!--                     		<tr> -->
+<!--                     			<td style="color:#1B87B8">&nbsp;&nbsp;&nbsp;围护墙(边坡)顶部水平位移数据上传：</td> -->
+<!--                     			<td><input name="file" type="file" data-show-preview="false" style="width:200px;height:30px;margin-right:5px;"></td> -->
+<!--                     			<td><a data-toggle="modal" class="btn btn-sm btn-info" id="uploadWYSDataBtn"><i class="glyphicon glyphicon-plus"></i>上传</a></td> -->
+<!--                     		</tr> -->
+<!--                     	</table> -->
+<!--    					</form> -->
+<!--    					</div> -->
+<!--    					<div style="margin-left:20px;float:left"> -->
+<!--    					<form id="uploadWYDLevelHForm" method="post" enctype="multipart/form-data"> -->
+<!-- 						<table> -->
+<!-- 							<tr> -->
+<!-- 								<td style="color:#1B87B8">&nbsp;&nbsp;&nbsp;围护墙(边坡)顶部竖向位移数据上传：</td> -->
+<!-- 								<td><input name="file" type="file" -->
+<!-- 									data-show-preview="false" style="width: 200px; height: 30px;margin-right:5px;"></td> -->
+<!-- 								<td><a data-toggle="modal" class="btn btn-sm btn-info" -->
+<!-- 									id="uploadWYDLevelHDataBtn"><i -->
+<!-- 										class="glyphicon glyphicon-plus"></i>上传</a></td> -->
+<!-- 							</tr> -->
+<!-- 						</table> -->
+<!-- 					</form> -->
+<!-- 					</div> -->
+				</div>
+            </div>
+            <div data-options="region:'center'" id="jqGrid_monitorItemDG" style="padding:0 6px;">
+                <table id="monitorItemDG"></table>
+            </div>
+        </div>
+    </div>
+    <!-- 增加监测项 -->
+    <div id="addMonitorItemDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="addMonitor-modal" style="width:500px;">
+            <div class="modal-content" style="height:100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="tableListTitle" style="margin-top:4px;">
+                            添加监测项
+                        </div>
+                        <table id="selMonitorItemDG">
+                        </table>
+                        <p style="margin:5px 3px;float:right;">
+                            <button type="button" id="saveMonitorItemBtn" class="btn btn-xs btn-success">
+                                <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 报警设置 -->
+    <div id="warningSettingDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="warning-modal" style="width:700px;">
+            <div class="modal-content" style="height:100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <p style="margin:5px 3px 0 3px;float:left;">
+                            <a data-toggle="modal" class="btn btn-xs btn-info" id="addWarningBtn" href="#warningInfoDialog"><i class="glyphicon glyphicon-plus"></i>&nbsp新增</a>
+                        </p>
+                        <div class="tableListTitle" style="margin-top:3px;">
+                            报警参数设置
+                        </div>
+                        <table id="warningDG">
+                        </table>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="warningInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="addWarning-modal" style="width:600px;">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="warningForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        报警设置参数
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1">
+                                    </th>
+                                    <th colspan="1">
+                                        预警值
+                                    </th>
+                                    <th colspan="1">
+                                        报警值
+                                    </th>
+                                    <th colspan="1">
+                                        控制值
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                  本次变化速率     				<label id="perChangeL"></label>
+                                    </th>
+                                    <td colspan="1">
+<!--                                         <input name="earlySingleRate" type="text" maxlength="100" id="earlySingleRate" class="input" style="width: 95%;" required/> -->
+										<input name="earlySingleRate" type="text" maxlength="100" id="earlySingleRate" class="input" style="width: 95%;display:none" required/>
+                                    </td>
+                                    <td colspan="1">
+                                        <input name="warnSingleRate" type="text" maxlength="100" id="warnSingleRate" class="input" style="width: 95%;" required/>
+                                    </td>
+                                    <td colspan="1">
+<!--                                         <input name="controlSingleRate" type="text" maxlength="100" id="controlSingleRate" class="input" style="width: 95%;" required/> -->
+										<input name="controlSingleRate" type="text" maxlength="100" id="controlSingleRate" class="input" style="width: 95%;display:none" required/>
+                                    </td>
+                                </tr>
+                                <tr id="accumPanel"style="height:100%;overflow:auto;">
+                                    <th colspan="1">
+                                        累计变化					<label id="totalChangeL"></label>
+                                    </th>
+                                    <td colspan="1">
+                                        <input name="earlyAccum" type="text" maxlength="100" id="earlyAccum" class="input" style="width: 95%;" required/>
+                                    </td>
+                                    <td colspan="1">
+                                        <input name="warnAccum" type="text" maxlength="100" id="warnAccum" class="input" style="width: 95%;" required/>
+                                    </td>
+                                    <td colspan="1">
+                                        <input name="controlAccum" type="text" maxlength="100" id="controlAccum" class="input" style="width: 95%;" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        报警类型
+                                    </th>
+                                    <td colspan="1">
+                                        <input name="warningName" type="text" maxlength="100" id="warningName" class="input" style="width: 95%;" required/>
+                                    </td>
+                                    <td colspan="1">
+                                        <label id="editOrDelWarning" style="visibility: hidden;"></label>
+                                    </td>
+                                    <td colspan="1">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">
+                                        <button type="button" id="saveWarningBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelSaveWarningBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 断面设置 -->
+    <div id="sectionSettingDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="section-modal" style="width:700px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <p style="margin:5px 3px 0 3px;float:left;">
+                            <a data-toggle="modal" class="btn btn-xs btn-info" id="addSectionBtn" href="#sectionInfoDialog"><i class="glyphicon glyphicon-plus"></i>&nbsp新增</a>
+                        </p>
+                        <div class="tableListTitle" style="margin-top:3px;">
+                            虚拟断面设置
+                        </div>
+                        <table id="sectionDG">
+                        </table>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sectionInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="addSection-modal" style="width:600px;">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="sectionForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        虚拟断面参数
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+                                <tr style="display: none;">
+                                    <td>
+                                        <label id="sectionUuid"></label>
+                                    </td>
+                                    <td>
+                                        <label id="addOrEditSection"></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        断面名称
+                                    </th>
+                                    <td colspan="1">
+                                        <input name="sectionName" type="text" maxlength="100" id="sectionName" class="input" style="width:200px;" required/>
+                                    </td>
+                                </tr>
+                                <tr id="startPointNameTR">
+                                    <th colspan="1">
+                                        断面起始点
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="startPointName" class="easyui-combobox" data-options="valueField:'surveyPointUuid',textField:'code'" style="width:200px;" required>
+                                    </td>
+                                </tr>
+                                <tr id="endPointNameTR">
+                                    <th colspan="1">
+                                        断面终止点
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="endPointName" class="easyui-combobox" data-options="valueField: 'surveyPointUuid',textField: 'code' " style="width:200px; " required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1">
+                                        断面方向
+                                    </th>
+                                    <td colspan="1">
+                                        <input id="direction" class="easyui-combobox" data-options="valueField: 'id',textField: 'text'" style="width:200px;" required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">
+                                        <button type="button" id="saveSectionBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelSectionBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 监测点设置 -->
+    <div id="surveyPointSettingDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="pointSetting-modal" style="width:700px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <p style="margin:5px 3px 0 3px;float:left;">
+                            <a data-toggle="modal" class="btn btn-xs btn-info" id="addSurveyPointBtn"><i class="glyphicon glyphicon-plus"></i>&nbsp新增</a>
+                        </p>
+                        <div class="tableListTitle" style="margin-top:3px;">
+                            监测点列表
+                        </div>
+                        <table id="surveyPointDG"></table>
+                        <div id="pager_surveyPointDG"></div>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 测点设置增加 -->
+    <div id="surveyPointInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="addPointSetting-modal" style="width: 600px;">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="spContentDiv" style="width:100%;height:100%;"></div>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-success" id="saveSurveyPointBtn"><strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="updateSurveyPointInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="addPointSetting-modal" style="width: 600px;">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="updateSPContentDiv" style="width:100%;height:100%;"></div>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-success" id="updateSurveyPointBtn"><strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 设备设置 -->
+    <div id="spZCDeviceSettingDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="spZCDevice-modal" style="width:650px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <p style="margin:5px 3px 0 3px;float:left;">
+                            <a data-toggle="modal" class="btn btn-xs btn-info" id="addSP_zcBtn"><i class="glyphicon glyphicon-plus"></i>&nbsp新增</a>
+                        </p>
+                        <div class="tableListTitle" style="margin-top:3px;">
+                            设备列表
+                        </div>
+                        <table id="sp_zcDG"></table>
+                        <div id="pager_sp_zcDG"></div>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="spZCInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="spZCInfo-modal" style="width:500px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="spZCContentDiv" style="width:100%;height:100%;"></div>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-success" id="saveSPzctBtn"><strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 监测项设置 -->
+    <div id="monitorItemSettingDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="monitorItem-modal" style="width:500px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="updateMonitorItemSettingContentDiv" style="width:100%;height:100%;"></div>
+                        <p style="margin:4px auto;text-align:center">
+                            <button type="button" class="btn btn-xs btn-success" id="saveMonitorItemSettingBtn"><strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

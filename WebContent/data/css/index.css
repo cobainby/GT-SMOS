@@ -1,0 +1,116 @@
+@CHARSET "UTF-8";
+body{
+	margin: 0 0 0 0 ;
+}
+/*=================顶部====================*/
+.noBg{
+	background: rgba(255,255,255, 0);
+}
+#headerArea {
+	width:100%;
+	height: 115px;
+	background: url("../../common/image/header-profile-skin-1.png");
+}
+.header {
+	width:100%;
+	height: 100%;
+/* 	background: url("../../common/image/nav_bg_img_01.png"); */
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size:100% 100%;
+}
+.logo {
+	width: 450px;
+	height: 65px;
+	background: url("../../common/image/nav_bg_img_02.png") no-repeat;
+}
+.header_line{
+	width:100%;
+	height:30px;
+	background: url("../../common/image/top_line_bg.png");
+}
+.headerMenuText{
+	color:#000000;
+	font-weight: bold;
+}
+.headerMenuText1{
+	color:#ffffff;
+	font-weight: bold;
+}
+.userInfo{
+	line-height:30px;
+	vertical-align:middle;
+	text-align:right;
+	font-size: 14px;
+}
+.userInfoText{
+	color:#fff;
+}
+.textInList{
+	width:180px;
+	height:35px;
+	padding-left:10px;
+	line-height:35px;
+	vertical-align:middle;
+	font-size:16px;
+	font-weight: bold;
+}
+/* 修改easyui linkbutton的样式 */
+.l-btn-large .l-btn-icon {
+  width: 40px;
+  height: 40px;
+}
+.l-btn-text {
+  font-size: 14px;
+}
+.l-btn-large .l-btn-icon-top .l-btn-text {
+  margin-top: 45px;
+  line-height: 24px;
+  min-width: 32px;
+  letter-spacing:2px;
+}
+.l-btn-large .l-btn-icon-top .l-btn-icon {
+  margin: 0 0 0 -20px;
+}
+.l-btn {
+  color: #F5F5F5;
+  background: transparent;
+}
+.l-btn-focus {
+  outline: none;
+}
+.l-btn:hover {
+  background: transparent;
+  color: #F5F5F5;
+  border: none;
+}
+.l-btn-selected,
+.l-btn-selected:hover {
+  background: #71BDE1;
+  filter: none;
+}
+.l-btn-plain-selected,
+.l-btn-plain-selected:hover {
+  background: #71BDE1;
+}
+/* end 修改easyui linkbutton的样式 */
+.icon-organ{
+	background:url('../../common/image/organ.png') no-repeat center center;
+}
+.menuBtnSize{
+	width:100px;
+	height:70px;
+}
+.icon-account{
+	background:url('../../common/image/account.png') no-repeat center center;
+}
+.icon-project{
+	background:url('../../common/image/project.png') no-repeat center center;
+}
+.icon-report{
+	background:url('../../common/image/report.png') no-repeat center center;
+}
+.icon-warning{
+	background:url('../../common/image/warning.png') no-repeat center center;
+}
+

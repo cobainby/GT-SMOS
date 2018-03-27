@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/smosplat/common/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/project.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=w0gvXYvFYD842phtrIRR1cWQvrfZLgsk"></script>
+    <script type="text/javascript" src="/smosplat/common/js/PerfectLoad.js"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+    .alarmInfo {
+        width: 99%;
+        height: 30px;
+        margin: 2px auto;
+        border: 1px solid #D0E2F8;
+        font-size: 12px;
+    }
+
+    .alarmInfo table {
+        float: left;
+        margin-left: 20px;
+        font-size: 12px
+    }
+
+    .alarmInfo table td {
+        width: 100px;
+        vertical-align: middle;
+    }
+   .ui-autocomplete{
+       z-index: 11111;
+    }
+    </style>
+</head>
+
+<body class="easyui-layout" id="monitorBody">
+    <!-- 所有项目的地图 -->
+    <div id="rightDiv" data-options="region:'east',border:false">
+        <div class="easyui-layout fitParent">
+            <div id="eastTopDiv" data-options="region:'center',border:false">
+                <div class="easyui-layout fitParent">
+                    <div data-options="region:'north',border:false" style="height:45px;">
+                        <table id="tableHeader" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <th id="projectNameLabel" style="font-weight: bold;font-size: 15px;color: #1486CB;">
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div data-options="region:'center',border:false" id="jqGrid_monitor">
+                        <div class="alarmInfo">
+                            <div style=" height: 5px;">
+                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <div style="float: left; width: 15px;">
+                                                <img src="/smosplat/common/image/green.png" /></div>
+                                            <div style="float: left; width: 65px; height: 20px; line-height: 20px;">
+                                                正常</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div style="float: left; width: 15px;">
+                                                <img src="/smosplat/common/image/yellow.gif" /></div>
+                                            <div style="float: left; width: 65px; height: 20px; line-height: 20px;">
+                                                超报警值</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div style="float: left; width: 15px;">
+                                                <img src="/smosplat/common/image/red.gif" /></div>
+                                            <div style="float: left; width: 65px; height: 20px; line-height: 20px;">
+                                                超控制值
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table id="monitorItemDG"></table>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'south',border:false" id="mapPlaceHodler" style="background-color: #fff;"></div>
+        </div>
+    </div>
+    <div id="mainDiv" data-options="region:'center',border:false">
+        <div class="easyui-layout fitParent">
+            <div data-options="region:'north'" style="width:100%;height:78px;padding:0 6px;">
+                <div class="topTool" style="width:100%;height:40px;margin-top:4px;">
+                    <p style="margin:4px 3px;float:left;">
+                        <a data-toggle="modal" class="btn btn-sm btn-info" id="viewOrganBtn"><i class="glyphicon glyphicon-info-sign"></i>&nbsp机构管理</a>
+                        <a data-toggle="modal" class="btn btn-sm btn-info" id="editProjectBtn"><i class="glyphicon glyphicon-pencil"></i>&nbsp修改工程</a>
+                        <a data-toggle="modal" class="btn btn-sm btn-info" id="delProjectBtn"><i class="glyphicon glyphicon-trash"></i>&nbsp删除工程</a>
+                    </p>
+                </div>
+                <div class="tableListTitle" style="margin-top:4px;">
+                    工程项目列表
+                </div>
+            </div>
+            <div data-options="region:'center'" id="jqGrid_project" style="padding:0 6px;">
+                <table id="projectDG"></table>
+            </div>
+        </div>
+    </div>
+    <div id="mapDialog" class="easyui-dialog" data-options="closed:false,title:'项目地图',closable:false">
+        <div class="fitParent" id="map"></div>
+    </div>
+</body>
+
+</html>

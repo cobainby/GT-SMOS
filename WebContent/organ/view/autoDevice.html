@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动化设备管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg easyui-layout">
+    <div data-options="region:'north'" style="width:100%;height:56px;padding:0 10px;">
+        <div id="autoDeviceToolbar" style="height:34px;float:left;margin:10px 3px;">
+            <div style="line-height: 33px;vertical-align: middle;">
+                <label>根据机构进行过滤：</label>
+                <input id="organCB" class="easyui-combobox" data-options="valueField:'organUuid',textField:'organName',editable:false" style="width:200px;">
+                <a id="filterByOrganBtn" class="btn btn-danger btn-xs" iconCls="icon-search"><i class="glyphicon glyphicon-search"></i>&nbsp过滤</a>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="float:right;width:55%; margin:7px 0;">
+            <li class="active">
+                <a data-toggle="tab" href="#tab-1"><i class="glyphicon glyphicon-bookmark"></i>自动设备列表</a>
+            </li>
+        </ul>
+    </div>
+    <div data-options="region:'center'" id="jqGrid_AutoDevice" style="padding:0 10px;">
+        <table id="autoDeviceDG"></table>
+        <div id="pager_autoDeviceDG"></div>
+    </div>
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/organ/js/autoDevice.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+</body>
+
+</html>

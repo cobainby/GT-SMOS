@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+<script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/smosplat/organ/js/role.js"></script>
+<script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+<style type="text/css">
+	body{
+		margin: 0 0 0 0 ;
+	}
+	.noBg{
+		background: rgba(255,255,255, 0);
+	}
+	#headerArea {
+		width:100%;
+		height: 115px;
+		background: url("/smosplat/common/image/nav_bg_03.jpg");
+	}
+	.header {
+		width:100%;
+		height: 100%;
+		background: url("/smosplat/common/image/nav_bg_img_01.png");
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size:100% 100%;
+	}
+	.logo {
+		width: 100%;
+		height:100%;
+		background: url("/smosplat/common/image/nav_bg_img_02.png");
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+	.header_line{
+		width:100%;
+		height:30px;
+		line-height:29px;
+		text-align: right;
+		padding: 2px 20px;
+		background: url("/smosplat/common/image/top_line_bg.png");
+	}
+</style>
+<title>权限设置</title>
+</head>
+<body class="easyui-layout">
+	<!-- 头部以及菜单 -->
+	<div class="headerArea" data-options="region:'north'">
+		<div class="easyui-layout header">
+			<div data-options="region:'west',border:false" class="noBg" style="width: 500px;height:85px;">
+				<div class="logo"></div>
+			</div>
+			<div data-options="region:'center',border:false" class="noBg"></div>
+			<!-- 头部最底下的横条 -->
+			<div data-options="region:'south',border:false" class="header_line">
+				<a href="/smosplat/index" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" style="width:100px;height:25px;">返回首页</a>
+			</div>
+		</div>
+	</div>
+	<div data-options="region:'west'" style="width:400px;">
+		<table id="roleDG" class="easyui-datagrid" class="fitParent"
+			data-options="title:'角色列表',fit:true,singleSelect:true,toolbar:'#roleToolbar'">
+			<thead>
+				<tr>
+					<th data-options="field:'roleName',align:'center',width:'100%'">角色名称</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="roleToolbar" style="padding:5px;height:auto">
+			<div style="margin-bottom:5px">
+				<a id="addRoleBtn" href="#" class="easyui-linkbutton" iconCls="icon-add">增加</a>
+				<a id="deleteRoleBtn" href="#" class="easyui-linkbutton" iconCls="icon-remove">删除</a>
+			</div>
+		</div>
+		<div id="addRoleDialog" class="easyui-dialog" style="width: 400px; height: 200px; padding: 10px 20px"
+			data-options="title:'增加角色',closed:true,buttons:'#addRoleButtons'">
+			<div class="form_title">增加角色</div>
+			<form id="addRoleForm">
+				<div class="form_item">
+					<label>角色名称:</label> <input id="roleName" class="easyui-validatebox" data-options="required:true">
+				</div>
+			</form>
+		</div>
+		<div id="addRoleButtons">
+			<a id="saveRoleBtn" href="#" class="easyui-linkbutton" iconCls="icon-ok" style="color: #235E72">确定</a>
+			<a id="cancelSaveRoleBtn" href="#" class="easyui-linkbutton" iconCls="icon-cancel" style="color: #235E72">取消</a>
+		</div>
+	</div>
+	<div data-options="region:'center'">
+		<table id="roleItemDG" class="easyui-datagrid" class="fitParent"
+			data-options="title:'权限列表',fit:true,singleSelect:true,toolbar:'#roleItemToolbar'">
+			<thead>
+				<tr>
+					<th data-options="field:'roleItemName',align:'center',width:'10%'">权限名称</th>
+					<th data-options="field:'number',align:'center',width:'20%'">权限序号</th>
+					<th data-options="field:'roleItemDesc',align:'center',width:'60%'">权限描述</th>
+					<th data-options="field:'useable',align:'center',width:'10%',formatter:formatUseable">是否可用</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="roleItemToolbar" style="padding:5px;height:auto">
+			<div style="margin-bottom:5px">
+				<a id="addRoleItemBtn" href="#" class="easyui-linkbutton" iconCls="icon-add">增加</a>
+				<a id="deleteRoleItemBtn" href="#" class="easyui-linkbutton" iconCls="icon-remove">删除</a>
+			</div>
+		</div>
+		<div id="addRoleItemDialog" class="easyui-dialog" style="width: 400px; height: 350px; padding: 10px 20px"
+			data-options="title:'增加权限',closed:true,buttons:'#addRoleItemButtons'">
+			<div class="form_title">增加权限</div>
+			<form id="addRoleItemForm">
+				<div class="form_item">
+					<div class="form_item">
+						<label>权限名称:</label> <input id="roleItemName" class="easyui-validatebox" data-options="required:true">
+					</div>
+					<div class="form_item">
+						<label>序号:</label> <input id="number" class="easyui-validatebox" data-options="required:true">
+					</div>
+					<div class="form_item">
+						<label>权限描述:</label> <input class="easyui-textbox" id="roleItemDesc" data-options="multiline:true,required:true" style="height:100px">
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="addRoleItemButtons">
+			<a id="saveRoleItemBtn" href="#" class="easyui-linkbutton" iconCls="icon-ok" style="color: #235E72">确定</a>
+			<a id="cancelSaveRoleItemBtn" href="#" class="easyui-linkbutton" iconCls="icon-cancel" style="color: #235E72">取消</a>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height:35px;text-align: center;line-height: 33px;vertical-align: middle;">
+		<a id="saveRoleRoleItemBtn" href="#" class="easyui-linkbutton" iconCls="icon-ok">保存角色对应的权限</a>
+	</div>
+</body>
+</html>

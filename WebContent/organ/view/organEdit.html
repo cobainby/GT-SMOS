@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/smosplat/organ/css/organEdit.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/fileinput.css">
+    <link rel="stylesheet" href="common/css/bootstrap.min.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" href="/smosplat/common/css/dropzone.css " rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/organ/js/organEdit.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput_locale_zh.js"></script>
+    <script src="/smosplat/common/js/uploadUtil.js"></script>
+    <script src="/smosplat/common/js/util.js"></script>
+    <title>Insert title here</title>
+</head>
+
+<body class="easyui-layout">
+    <!-- 本机构信息列表 -->
+    <div id="organTableContainer" data-options="region:'center'" >
+        <table class="tableEditDetail" id="organTable" cellpadding="0" cellspacing="1" ">
+            <tr>
+                <th colspan="1">机构名称</th>
+                <td>
+                    <input id="organName" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+                <th colspan="1">设立时间</th>
+                <td>
+                    <input id="establishedTime" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">登录名</th>
+                <td colspan="1">
+                    <input id="loginName" type="text" maxlength="100" class="input" style="width: 95%;" required>
+                </td>
+                <td colspan="2">
+                    <input id="accountName" type="hidden" maxlength="100" class="input" style="width: 95%;" required>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">机构地址</th>
+                <td colspan="1">
+                    <input id="adress" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+                <th colspan="1">组织机构代码</th>
+                <td colspan="1">
+                    <input id="organCode" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">联系人</th>
+                <td colspan="1">
+                    <input id="workerName" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+                <th colspan="1">联系人电话</th>
+                <td colspan="1">
+                    <input id="phone" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+            </tr>
+<!--             <tr> -->
+<!--                 <th colspan="1">机构联系电话</th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <input id="telephone" type="text" maxlength="100" class="input" style="width: 95%;" /> -->
+<!--                 </td> -->
+<!--                 <th colspan="1">邮政编码</th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <input id="postcode" type="text" maxlength="100" class="input" style="width: 95%;" /> -->
+<!--                 </td> -->
+<!--             </tr> -->
+<!--             <tr> -->
+<!--                 <th colspan="1">监督员</th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <input id="supervisorName" type="text" maxlength="100" class="input" style="width: 95%;" /> -->
+<!--                 </td> -->
+<!--                 <th colspan="1">监督员电话</th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <input id="supervisorPhone" type="text" maxlength="100" class="input" style="width: 95%;" /> -->
+<!--                 </td> -->
+<!--             </tr> -->
+<!--             <tr> -->
+<!--                 <th colspan="1">机构电子邮箱</th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <input id="email" type="text" maxlength="100" class="input" style="width: 95%;" /> -->
+<!--                 </td> -->
+<!--                 <th colspan="1">组织机构代码</th> -->
+<!--                 <td colspan="1"> -->
+<!--                     <input id="organCode" type="text" maxlength="100" class="input" style="width: 95%;" /> -->
+<!--                 </td> -->
+<!--             </tr> -->
+            <tr>
+                <th colspan="1">检测资质证书编号</th>
+                <td colspan="1">
+                    <input id="detactNumber" type="text" maxlength="100" class="input" style="width: 95%;" />
+					<div class="col-lg-3 col-md-3 col-sm-3 ">
+                        <input id="detactNumber_input" value="comLicense" name="file" type="file" data-show-preview="false">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                        <a id="viewDetactNumber" style="margin-left:5px" class="glyphicon glyphicon-search">查看</a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                        <a id="delDetactNumber" style="margin-left:5px;color:red" class="glyphicon glyphicon-trash">删除</a>
+                    </div>
+                </td>
+                <th colspan="1">计量认证证书编号</th>
+                <td colspan="1">
+                    <input id="meteringNumber" type="text" maxlength="100" class="input" style="width: 95%;" />
+					<div class="col-lg-3 col-md-3 col-sm-3 ">
+                        <input id="meteringNumber_input" value="meteringNumber" name="file" type="file" data-show-preview="false">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                        <a id="viewMeteringNumber" style="margin-left:5px" class="glyphicon glyphicon-search">查看</a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                        <a id="delMeteringNumber" style="margin-left:5px;color:red" class="glyphicon glyphicon-trash">删除</a>
+                    </div>
+                </td>
+            </tr>
+                        <tr>
+                <th colspan="1">法定代表人</th>
+                <td colspan="1">
+                    <input id="representative" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+                <th colspan="1"> 技术负责人</th>
+                <td colspan="1">
+                    <input id="techDirector" type="text" maxlength="100" class="input" style="width: 95%;" />
+                </td>
+            </tr>
+            <tr>
+                <th colspan="4">
+                    <button type="button" id="saveOrgan" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp保存</strong>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-default" id="toOrganDetail" data-dismiss="modal"><strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp返回</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

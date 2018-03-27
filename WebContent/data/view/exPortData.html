@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <!-- 设置 -->
+    <script type="text/javascript" src="/smosplat/common/js/lib/sockjs/sockjs-1.1.1.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/stomp/stomp.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/uploadUtil.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/data/js/exPortData.js"></script>
+    <!--    时间控件 -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/PerfectLoad.js"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+    th.ui-th-column div {
+        white-space: normal !important;
+        height: auto !important;
+        padding: 0px;
+    }
+
+    .tableEditDetail {
+        width: 85%;
+        height: 88%;
+    }
+
+    #exportData5 td,
+    #exportData6 td {
+        text-align: center;
+    }
+
+    .tableEditDetail textArea {
+        overflow: hidden;
+        vertical-aglin: middle;
+        height: 25px;
+        line-height: 25px;
+        width: 80%;
+        margin-top: 3px;
+    }
+
+    .tableEditDetail .monitor {
+        height: 10px;
+        line-height: 10px;
+        text-align: center;
+        padding-left: 5px;
+        word-wrap: break-word;
+        font-weight: normal;
+        background-color: #fafafa;
+    }
+
+    .tableEditDetail .title {
+        height: 15px;
+        line-height: 15px;
+        text-align: center;
+    }
+    </style>
+    <script>
+    $(function() {
+        var bodyHeight = $('#autoBody').height();
+        var bodyWidth = $('#autoBody').width();
+        //所有监测项
+        var allMonitorItems;
+        var allDataObj;
+        //定义监测概况数据
+        var projectInfo;
+        var mainInfo;
+        var reportUuid;
+        //入库后的周报数据
+        var reportDataObj;
+        //设置模态框弹出的表格的高度
+        $("#addtion-modal").height(bodyHeight*0.7);
+        $("#otherInfo-content").width(bodyWidth*0.6);
+        $('#p1p5').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            weekStart: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            todayBtn: 1,
+            startView: 2,
+            minView: 2,
+            endDate: new Date(),
+            forceParse: 0,
+            pickerPosition: "top-right"
+        }).on('changeDate', function(e) {
+            var startDate = $("#p1p5").val();
+            var dateTemp = startDate.split("-");
+            var nDate = new Date(dateTemp[1] + '-' + dateTemp[2] + '-' + dateTemp[0]); //转换为MM-DD-YYYY格式    
+            var millSeconds = Math.abs(nDate) + (6 * 24 * 60 * 60 * 1000);
+            var rDate = new Date(millSeconds);
+            var year = rDate.getFullYear();
+            var month = rDate.getMonth() + 1;
+            if (month < 10) month = "0" + month;
+            var date = rDate.getDate();
+            if (date < 10) date = "0" + date;
+            $("#p1p6").val(year + "-" + month + "-" + date);
+        });
+        $.post("getProjectReportByProject", function(data, status) {
+            reportDataObj = JSON.parse(data).entity;
+            if (reportDataObj != null) {
+                reportUuid = reportDataObj.reportUuid;
+            }
+        });
+        $.post("getMonitorItemsByProject", function(data, status) {
+            allMonitorItems = JSON.parse(data).monitorItems;
+            for (var i = 0; i < allMonitorItems.length; i++) {
+                if (allMonitorItems[i].code == "WYS") {
+                    var trWYS1 = "<tr>" + "<td colspan='2'>围护墙(边坡)顶部水平位移</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p1' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p2' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p3' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p4' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p5' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p6' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p7' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trWYS1);
+                    var trWYS2 = "<tr>" + "<th colspan='2' class='monitor'>围护墙(边坡)顶部水平位移</th>" + "<th class='monitor' colspan='1'><label id='p7p1' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p2' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p3' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p4' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p5' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p6' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p7' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p8' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trWYS2);
+                     //附件导出
+            		var trWYS3="<tr style='height:70px;'>"+"<th colspan='4'>围护墙(边坡)顶部水平位移</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p78' class='input' required></textarea></th>"+"<th class='monitor' colspan='8' ><textarea rows='2' cols='20' id='p1p79' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trWYS3);
+                    
+                }
+                if (allMonitorItems[i].code == "WYD") {
+                    var trWYD1 = "<tr>" + "<td colspan='2'>围护墙(边坡)顶部竖向位移</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p8' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p9' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p10' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p11' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p12' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p13' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p14' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trWYD1);
+                    var trWYD2 = "<tr>" + "<th colspan='2' class='monitor'>围护墙(边坡)顶部竖向位移</th>" + "<th class='monitor' colspan='1'><label id='p7p9' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p10' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p11' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p12' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p13' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p14' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p15' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p16' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trWYD2);
+                  //附件导出
+            		var trWYD3="<tr style='height:70px;'>"+"<th colspan='4'>围护墙(边坡)顶部竖向位移</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p80' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p81' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trWYD3);
+                }
+                if (allMonitorItems[i].code == "MT") {
+                    var trMT1 = "<tr>" + "<td colspan='2'>锚杆内力</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p15' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p16' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p17' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p18' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p19' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p20' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p21' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trMT1);
+                    var trMT2 = "<tr>" + "<th colspan='2' class='monitor'>锚杆内力</th>" + "<th class='monitor' colspan='1'><label id='p7p17' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p18' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p19' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p20' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p21' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p22' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p24' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData8").append(trMT2);
+                  //附件导出
+            		var trMT3="<tr style='height:70px;'>"+"<th colspan='4'>锚杆内力</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p82' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p83'  style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trMT3);
+                }
+                if (allMonitorItems[i].code == "SM") {
+                    var trSM1 = "<tr>" + "<td colspan='2'>周边建筑物竖向位移</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p22' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p23' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p24' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p25' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p26' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p27' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p28' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trSM1);
+                    var trSM2 = "<tr>" + "<th colspan='2' class='monitor'>周边建筑物竖向位移</th>" + "<th class='monitor' colspan='1'><label id='p7p25' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p26' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p27' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p28' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p29' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p30' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p31' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p32' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trSM2);
+                  //附件导出
+            		var trSM3="<tr style='height:70px;'>"+"<th colspan='4'>周边建筑物竖向位移</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p84' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p85' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trSM3);
+                }
+                if (allMonitorItems[i].code == "ZGD") {
+                    var trZGD1 = "<tr>" + "<td colspan='2'>周边管线竖向位移</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p29' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p30' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p31' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p32' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p33' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p34' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p35' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trZGD1);
+                    var trZGD2 = "<tr>" + "<th colspan='2' class='monitor'>周边管线竖向位移</th>" + "<th class='monitor' colspan='1'><label id='p7p33' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p34' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p35' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p36' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p37' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p38' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p39' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p40' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trZGD2);
+                  //附件导出
+            		var trZGD3="<tr style='height:70px;'>"+"<th colspan='4'>周边管线竖向位移</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p86' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p87' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trZGD3);
+                }
+                if (allMonitorItems[i].code == "SW") {
+                    var trSW1 ="<tr>" + "<td colspan='2'>地下水位</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p36' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p37' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p38' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p39' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p40' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p41' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p42' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trSW1);
+                    var trSW2 = "<tr>" + "<th colspan='2' class='monitor'>地下水位</th>" + "<th class='monitor' colspan='1'><label id='p7p41' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p42' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p43' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p44' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p45' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p46' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p47' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p48' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trSW2);
+                  //附件导出
+            		var trSW3="<tr style='height:70px;'>"+"<th colspan='4'>地下水位</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p88' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p89' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trSW3);
+                }
+                if (allMonitorItems[i].code == "CX") {
+                    var trCX1 = "<tr>" + "<td colspan='2'>支护结构深层水平位移</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p43' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p44' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p45' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p46' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p47' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p48' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p49' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trCX1);
+                    var trCX2 = "<tr>" + "<th colspan='2' class='monitor'>支护结构深层水平位移</th>" + "<th class='monitor' colspan='1'><label id='p7p49' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p50' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p51' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p52' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p53' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p54' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p55' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p56' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trCX2);
+                  //附件导出
+            		var trCX3="<tr style='height:70px;'>"+"<th colspan='4'>支护结构深层水平位移</th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p90' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p91' style='height:80%;width:90%;' class='input' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trCX3);
+                }
+                if (allMonitorItems[i].code == "LZ") {
+                    var trLZ1 = "<tr>" + "<td colspan='2'>立柱竖向位移</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p50' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p51' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p52' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p53' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p54' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p55' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p56' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trLZ1);
+                    var trLZ2 = "<tr>" + "<th colspan='2' class='monitor'>立柱竖向位移</th>" + "<th class='monitor' colspan='1'><label id='p7p57' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p58' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p59' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p60' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p61' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p62' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p63' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p64' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData7").append(trLZ2);
+                  //附件导出
+            		var trLZ3="<tr style='height:70px;'>"+"<th colspan='4'>立柱竖向位移 </th><th class='monitor' colspan='4'><textarea rows='2' cols='20' id='p1p92' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p93' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trLZ3);
+                }
+                if (allMonitorItems[i].code == "ZC") {
+                    var trZC1 = "<tr>" + "<td colspan='2'>支撑内力</td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p57' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p58' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p59' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p60' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p61' class='input' required></textarea></td>" +
+                        "<td colspan='1'><textarea rows='2' cols='20' id='p6p62' class='input' required></textarea></td>" + "<td colspan='1'><textarea rows='2' cols='20' id='p6p63' class='input' required></textarea></td>" + "</tr>";
+                    $("#exportData6").append(trZC1);
+                    var trZC2 = "<tr>" + "<th colspan='2' class='monitor'>支撑内力</th>" + "<th class='monitor' colspan='1'><label id='p7p65' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p66' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p67' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p68' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><label id='p7p69' style='width:80%;'></label></th>" +
+                        "<th class='monitor' colspan='1'><label id='p7p70' style='width:80%;'></label></th>" + "<th class='monitor' colspan='1'><textarea rows='2' cols='20' id='p7p72' class='input' required></textarea></th>" + "</tr>";
+                    $("#exportData8").append(trZC2);
+                  //附件导出
+            		var trZC3="<tr style='height:70px;' >"+"<th colspan='4'>支撑内力 </th><th class='monitor' colspan='2'><textarea rows='3' cols='20' id='p1p94' class='input' required></textarea></th>"+"<th class='monitor' colspan='8'><textarea rows='2' cols='20' id='p1p95' class='input' style='height:80%;width:90%;' required></textarea></th>"+"</tr>";
+            		$("#addtionTable").append(trZC3);
+                }
+                var papge=i+2;
+                var trTitile="<tr>"+"<th colspan='4' class='title'><p style='margin-left:25px;float:left;'>附件 "+papge+"&#12288"+allMonitorItems[i].monitorItemName+"数据表及曲线图</p><label class='point' style='border-bottom:1px dotted;width:60%;'></label><p style='float:right;margin-right:25px;'>9</p></th>"+"</tr>";
+                $("#exportData3").append(trTitile);
+            }
+        });
+        //设备类型
+        $.post("/smosplat/getCurrentProjectInfo", function(data, status) {
+            var dataObj = JSON.parse(data);
+            var projectUuid = dataObj.project.projectUuid;
+            $.post("getProjectByUuid", { projectUuid: projectUuid }, function(data, status) {
+                allDataObj = JSON.parse(data).project;
+                var organUuid=allDataObj.organ.organUuid;
+                $.post("getNoAutoDeviceByOrganUuid", { organUuid: organUuid }, function(data, status) {
+                	var devData=JSON.parse(data);
+                	if(devData.length!=0){
+                		for(var i=0;i<devData.rows.length;i++){
+                			//先判断是否是偶数，确定当前是两列
+                			if(i%2==0){
+                				//判断单列还是双列
+                				if(i<devData.rows.length-1){
+                                    //双列
+                				    var devType=(devData.rows[i].devType.devTypeName == null || devData.rows[i].devType.devTypeName == undefined) ? "" : devData.rows[i].devType.devTypeName;
+                        		    var modeName=(devData.rows[i].deviceModel.devModelName == null || devData.rows[i].deviceModel.devModelName == undefined) ? "" : devData.rows[i].deviceModel.devModelName;
+                        		    var sn=(devData.rows[i].sn == null || devData.rows[i].sn == undefined) ? "" : devData.rows[i].sn;
+                        		    var calibratedNum=(devData.rows[i].calibratedNum == null || devData.rows[i].calibratedNum == undefined) ? "" : devData.rows[i].calibratedNum;
+                        		    var expDate=(devData.rows[i].expDate == null || devData.rows[i].expDate == undefined) ? "" : devData.rows[i].expDate;
+                        	    	var devType2=(devData.rows[i+1].devType.devTypeName == null || devData.rows[i+1].devType.devTypeName == undefined) ? "" : devData.rows[i+1].devType.devTypeName;
+                            		var modeName2=(devData.rows[i+1].deviceModel.devModelName == null || devData.rows[i+1].deviceModel.devModelName == undefined) ? "" : devData.rows[i+1].deviceModel.devModelName;
+                            		var sn2=(devData.rows[i+1].sn == null || devData.rows[i+1].sn == undefined) ? "" : devData.rows[i+1].sn;
+                            		var calibratedNum2=(devData.rows[i+1].calibratedNum == null || devData.rows[i+1].calibratedNum == undefined) ? "" : devData.rows[i+1].calibratedNum;
+                            		var expDate2=(devData.rows[i+1].expDate == null || devData.rows[i+1].expDate == undefined) ? "" : devData.rows[i+1].expDate;
+                            		var trRows="<tr>"+"<th colspan='4' class='title'>"+devType+"</th>"+"<th colspan='4' class='title'>"+devType2+"</th>"+"</tr>"+
+                            		"<tr>"+"<th colspan='1' class='title'>规格型号</th>"+"<th colspan='1' class='title'>编号</th>"+
+                                    "<th colspan='1' class='title'>校准证号</th>"+"<th colspan='1' class='title'>有效日期</th>"+"<th colspan='1' class='title'>规格型号</th>"+
+                                    "<th colspan='1' class='title'>编号</th>"+"<th colspan='1' class='title'>校准证号</th>"+"<th colspan='1' class='title'>有效日期</th>"+
+                                    "</tr>"+"<tr>"+"<td colspan='1'><label  id='p5p1'>"+modeName+"</label></td>"+"<td colspan='1'><label  id='p5p2'>"+sn+"</label></td>"+
+                                	"<td colspan='1'><label  id='p5p3'>"+calibratedNum+"</label></td>"+"<td colspan='1'><label  id='p5p4'>"+timeStampToTimeString(expDate)+"</label></td>"+
+                                	"<td colspan='1'><label  id='p5p1'>"+modeName2+"</label></td>"+"<td colspan='1'><label  id='p5p2'>"+sn2+"</label></td>"+
+                            	    "<td colspan='1'><label  id='p5p3'>"+calibratedNum2+"</label></td>"+"<td colspan='1'><label  id='p5p4'>"+timeStampToTimeString(expDate2)+"</label></td>"+"</tr>";
+                                	$("#exportData5").append(trRows);
+                        	    }else if(i==devData.rows.length-1){
+                        	    	//单列
+                        	    	var devType=(devData.rows[i].devType.devTypeName == null || devData.rows[i].devType.devTypeName == undefined) ? "" : devData.rows[i].devType.devTypeName;
+                        		    var modeName=(devData.rows[i].deviceModel.devModelName == null || devData.rows[i].deviceModel.devModelName == undefined) ? "" : devData.rows[i].deviceModel.devModelName;
+                        		    var sn=(devData.rows[i].sn == null || devData.rows[i].sn == undefined) ? "" : devData.rows[i].sn;
+                        		    var calibratedNum=(devData.rows[i].calibratedNum == null || devData.rows[i].calibratedNum == undefined) ? "" : devData.rows[i].calibratedNum;
+                        		    var expDate=(devData.rows[i].expDate == null || devData.rows[i].expDate == undefined) ? "" : devData.rows[i].expDate;
+                            		var trRows="<tr>"+"<th colspan='4' class='title'>"+devType+"</th>"+"<th colspan='4' class='title'></th>"+"</tr>"+
+                            		"<tr>"+"<th colspan='1' class='title'>规格型号</th>"+"<th colspan='1' class='title'>编号</th>"+
+                                    "<th colspan='1' class='title'>校准证号</th>"+"<th colspan='1' class='title'>有效日期</th>"+"<th colspan='1' class='title'></th>"+
+                                    "<th colspan='1' class='title'></th>"+"<th colspan='1' class='title'></th>"+"<th colspan='1' class='title'></th>"+
+                                    "</tr>"+"<tr>"+"<td colspan='1'><label  id='p5p1'>"+modeName+"</label></td>"+"<td colspan='1'><label  id='p5p2'>"+sn+"</label></td>"+
+                                	"<td colspan='1'><label  id='p5p3'>"+calibratedNum+"</label></td>"+"<td colspan='1'><label  id='p5p4'>"+timeStampToTimeString(expDate)+"</label></td>"+
+                                	"<td colspan='1'><label  id='p5p1'></label></td>"+"<td colspan='1'><label  id='p5p2'></label></td>"+
+                            	    "<td colspan='1'><label  id='p5p3'></label></td>"+"<td colspan='1'><label  id='p5p4'></label></td>"+"</tr>";
+                                	$("#exportData5").append(trRows);
+                        	    }
+                			} 
+                		}
+                	}
+                });
+                
+                if (reportDataObj != null) {
+                    $("#p1p1").val(reportDataObj.p1p1);
+                    $("#p1p2").val(reportDataObj.p1p2);
+                    $("#p1p3").val(reportDataObj.p1p3);
+                    $("#p1p4").val(reportDataObj.p1p4);
+                    $("#p1p78").val(reportDataObj.p1p78);
+                    $("#p1p79").val(reportDataObj.p1p79);
+                    $("#p1p80").val(reportDataObj.p1p80);
+                    $("#p1p81").val(reportDataObj.p1p81);
+                    $("#p1p82").val(reportDataObj.p1p82);
+                    $("#p1p83").val(reportDataObj.p1p83);
+                    $("#p1p84").val(reportDataObj.p1p84);
+                    $("#p1p85").val(reportDataObj.p1p85);
+                    $("#p1p86").val(reportDataObj.p1p86);
+                    $("#p1p87").val(reportDataObj.p1p87);
+                    $("#p1p88").val(reportDataObj.p1p88);
+                    $("#p1p89").val(reportDataObj.p1p89);
+                    $("#p1p90").val(reportDataObj.p1p90);
+                    $("#p1p91").val(reportDataObj.p1p91);
+                    $("#p1p92").val(reportDataObj.p1p92);
+                    $("#p1p93").val(reportDataObj.p1p93);
+                    $("#p1p94").val(reportDataObj.p1p94);
+                    $("#p1p95").val(reportDataObj.p1p95);
+                } else {
+                    $("#p1p1").val(allDataObj.code);
+                    $("#p1p2").val(allDataObj.projectName);
+                    $("#p1p3").val(allDataObj.address);
+                    $("#p1p4").val(allDataObj.buildCompany);
+                }
+            });
+        });
+        $("#nextPage1").bind('click', function() {
+            $("#infoName").html(allDataObj.projectName + "监测报告");
+            var startDate = $("#p1p5").val();
+            var endDate = $("#p1p6").val();
+            if (startDate == "" || endDate == "") {
+                swal({ title: "导出失败！", text: "请选择初始日期和结束日期", type: "error" });
+                return;
+            }
+            $("#exportData1").hide();
+            $("#exportData2").show();
+            if (reportDataObj != null) {
+                $("#p2p1").val(reportDataObj.p2p1);
+                $("#p2p2").val(reportDataObj.p2p2);
+                $("#p2p3").val(reportDataObj.p2p3);
+                $("#p2p4").val(reportDataObj.p2p4);
+                $("#p2p5").val(reportDataObj.p2p5);
+                $("#p2p6").val(reportDataObj.p2p6);
+            } else {
+                $("#p2p1").val(allDataObj.code);
+            }
+        });
+        $("#nextPage2").bind('click', function() {
+            $("#exportData2").hide();
+            $("#exportData3").show();
+            $("#exportData3Button").show();
+        });
+        $("#nextPage3").bind('click', function() {
+            $("#exportData3").hide();
+            $("#exportData3Button").hide();
+            $("#exportData4").show();
+            if (reportDataObj != null) {
+                $("#p4p1").val(reportDataObj.p4p1);
+                $("#p4p2").val(reportDataObj.p4p2);
+                $("#p4p3").val(reportDataObj.p4p3);
+                $("#p4p4").val(reportDataObj.p4p4);
+                $("#p4p5").val(reportDataObj.p4p5);
+                $("#p4p6").val(reportDataObj.p4p6);
+                $("#p4p7").val(reportDataObj.p4p7);
+                $("#p4p8").val(reportDataObj.p4p8);
+                $("#p4p9").val(reportDataObj.p4p9);
+                $("#p4p10").val(reportDataObj.p4p10);
+                $("#p4p11").val(reportDataObj.p4p11);
+                $("#p4p12").val(reportDataObj.p4p12);
+                $("#p4p13").val(reportDataObj.p4p13);
+                $("#p4p14").val(reportDataObj.p4p14);
+                $("#p4p15").val(reportDataObj.p4p15);
+                $("#p4p16").val(reportDataObj.p4p16);
+                $("#p4p17").val(reportDataObj.p4p17);
+                $("#p4p18").val(reportDataObj.p4p18);
+            } else {
+                $("#p4p1").val(allDataObj.projectName);
+                $("#p4p2").val(allDataObj.address);
+                $("#p4p3").val(allDataObj.buildCompany);
+                $("#p4p4").val(allDataObj.designCompany);
+                $("#p4p5").val(allDataObj.designCompany);
+                $("#p4p6").val(allDataObj.constructCompany);
+                $("#p4p7").val(allDataObj.supervisorCompany);
+                $("#p4p8").val();
+                $("#p4p9").val();
+                $("#p4p10").val(allDataObj.deep);
+                $("#p4p11").val(allDataObj.safeLevel);
+                $("#p4p12").val(allDataObj.perimeter);
+                $("#p4p13").val();
+                $("#p4p14").val();
+                $("#p4p15").val();
+                $("#p4p16").val();
+                $("#p4p17").val();
+                $("#p4p18").val();
+            }
+        });
+        $("#nextPage4").bind('click', function() {
+            $("#exportData4").hide();
+            $("#exportData5").show();
+            $("#exportData5Button").show();
+            if (reportDataObj != null) {
+                $("#p5p1").val(reportDataObj.p5p1);
+                $("#p5p2").val(reportDataObj.p5p2);
+                $("#p5p3").val(reportDataObj.p5p3);
+                $("#p5p4").val(reportDataObj.p5p4);
+                $("#p5p5").val(reportDataObj.p5p5);
+                $("#p5p6").val(reportDataObj.p5p6);
+                $("#p5p7").val(reportDataObj.p5p7);
+                $("#p5p8").val(reportDataObj.p5p8);
+                $("#p5p9").val(reportDataObj.p5p9);
+                $("#p5p10").val(reportDataObj.p5p10);
+                $("#p5p11").val(reportDataObj.p5p11);
+                $("#p5p12").val(reportDataObj.p5p12);
+                $("#p5p13").val(reportDataObj.p5p13);
+                $("#p5p14").val(reportDataObj.p5p14);
+                $("#p5p15").val(reportDataObj.p5p15);
+                $("#p5p16").val(reportDataObj.p5p16);
+                $("#p5p17").val(reportDataObj.p5p17);
+                $("#p5p18").val(reportDataObj.p5p18);
+                $("#p5p19").val(reportDataObj.p5p19);
+                $("#p5p20").val(reportDataObj.p5p20);
+                $("#p5p21").val(reportDataObj.p5p21);
+                $("#p5p22").val(reportDataObj.p5p22);
+                $("#p5p23").val(reportDataObj.p5p23);
+                $("#p5p24").val(reportDataObj.p5p24);
+                $("#p5p25").val(reportDataObj.p5p25);
+            }
+        });
+        $("#nextPage5").bind('click', function() {
+            $("#exportData5").hide();
+            $("#exportData5Button").hide();
+            $("#exportData6Button").show();
+            $("#exportData6").show();
+            if (reportDataObj != null) {
+                $("#p6p1").val(reportDataObj.p6p1);
+                $("#p6p2").val(reportDataObj.p6p2);
+                $("#p6p3").val(reportDataObj.p6p3);
+                $("#p6p4").val(reportDataObj.p6p4);
+                $("#p6p5").val(reportDataObj.p6p5);
+                $("#p6p6").val(reportDataObj.p6p6);
+                $("#p6p7").val(reportDataObj.p6p7);
+                $("#p6p8").val(reportDataObj.p6p8);
+                $("#p6p9").val(reportDataObj.p6p9);
+                $("#p6p10").val(reportDataObj.p6p10);
+                $("#p6p11").val(reportDataObj.p6p11);
+                $("#p6p12").val(reportDataObj.p6p12);
+                $("#p6p13").val(reportDataObj.p6p13);
+                $("#p6p14").val(reportDataObj.p6p14);
+                $("#p6p15").val(reportDataObj.p6p15);
+                $("#p6p16").val(reportDataObj.p6p16);
+                $("#p6p17").val(reportDataObj.p6p17);
+                $("#p6p18").val(reportDataObj.p6p18);
+                $("#p6p19").val(reportDataObj.p6p19);
+                $("#p6p20").val(reportDataObj.p6p20);
+                $("#p6p21").val(reportDataObj.p6p21);
+                $("#p6p22").val(reportDataObj.p6p22);
+                $("#p6p23").val(reportDataObj.p6p23);
+                $("#p6p24").val(reportDataObj.p6p24);
+                $("#p6p25").val(reportDataObj.p6p25);
+                $("#p6p26").val(reportDataObj.p6p26);
+                $("#p6p27").val(reportDataObj.p6p27);
+                $("#p6p28").val(reportDataObj.p6p28);
+                $("#p6p29").val(reportDataObj.p6p29);
+                $("#p6p30").val(reportDataObj.p6p30);
+                $("#p6p31").val(reportDataObj.p6p31);
+                $("#p6p32").val(reportDataObj.p6p32);
+                $("#p6p33").val(reportDataObj.p6p33);
+                $("#p6p34").val(reportDataObj.p6p34);
+                $("#p6p35").val(reportDataObj.p6p35);
+                $("#p6p36").val(reportDataObj.p6p36);
+                $("#p6p37").val(reportDataObj.p6p37);
+                $("#p6p38").val(reportDataObj.p6p38);
+                $("#p6p39").val(reportDataObj.p6p39);
+                $("#p6p40").val(reportDataObj.p6p40);
+                $("#p6p41").val(reportDataObj.p6p41);
+                $("#p6p42").val(reportDataObj.p6p42);
+                $("#p6p43").val(reportDataObj.p6p43);
+                $("#p6p44").val(reportDataObj.p6p44);
+                $("#p6p45").val(reportDataObj.p6p45);
+                $("#p6p46").val(reportDataObj.p6p46);
+                $("#p6p47").val(reportDataObj.p6p47);
+                $("#p6p48").val(reportDataObj.p6p48);
+                $("#p6p49").val(reportDataObj.p6p49);
+                $("#p6p50").val(reportDataObj.p6p50);
+                $("#p6p51").val(reportDataObj.p6p51);
+                $("#p6p52").val(reportDataObj.p6p52);
+                $("#p6p53").val(reportDataObj.p6p53);
+                $("#p6p54").val(reportDataObj.p6p54);
+                $("#p6p55").val(reportDataObj.p6p55);
+                $("#p6p56").val(reportDataObj.p6p56);
+                $("#p6p57").val(reportDataObj.p6p57);
+                $("#p6p58").val(reportDataObj.p6p58);
+                $("#p6p59").val(reportDataObj.p6p59);
+                $("#p6p60").val(reportDataObj.p6p60);
+                $("#p6p61").val(reportDataObj.p6p61);
+                $("#p6p62").val(reportDataObj.p6p62);
+                $("#p6p63").val(reportDataObj.p6p63);
+                $("#p6p64").val(reportDataObj.p6p64);
+                $("#p6p65").val(reportDataObj.p6p65);
+                $("#p6p66").val(reportDataObj.p6p66);
+            }
+        });
+        $("#nextPage6").bind('click', function() {
+            $("#exportData6").hide();
+            $("#exportData6Button").hide();
+            $("#exportData7").show();
+            $("#exportData8").show();
+            $("#exportData7Button").show();
+            if (reportDataObj != null) {
+                $("#p7p8").val(reportDataObj.p7p8);
+                $("#p7p16").val(reportDataObj.p7p16);
+                $("#p7p24").val(reportDataObj.p7p24);
+                $("#p7p32").val(reportDataObj.p7p32);
+                $("#p7p40").val(reportDataObj.p7p40);
+                $("#p7p48").val(reportDataObj.p7p48);
+                $("#p7p56").val(reportDataObj.p7p56);
+                $("#p7p64").val(reportDataObj.p7p64);
+                $("#p7p72").val(reportDataObj.p7p72);
+            }
+            var p1p5 = $("#p1p5").val() + " " + "00:00:00";
+            var p1p6 = $("#p1p6").val() + " " + "23:59:59";
+            $.post("getLimitAccumOffsetAndBiggestChangeRateByPeriod", { sDateStr: p1p5, eDateStr: p1p6 }, function(data, status) {
+                projectInfo = JSON.parse(data);
+                if (projectInfo["WYS"] != null) {
+                    $("#p7p1").html(projectInfo["WYS"].maxAccumOffsetCode);
+                    $("#p7p2").html(projectInfo["WYS"].maxAccumOffset);
+                    $("#p7p3").html(projectInfo["WYS"].maxChangeRateCode);
+                    $("#p7p4").html(projectInfo["WYS"].maxChangeRate);
+                    $("#p7p5").html(projectInfo["WYS"].warnAccum);
+                    $("#p7p6").html(projectInfo["WYS"].controlAccum);
+                    $("#p7p7").html(projectInfo["WYS"].warnSingleRate);
+                }
+                if (projectInfo["WYD"] != null) {
+                    $("#p7p9").html(projectInfo["WYD"].maxAccumOffsetCode);
+                    $("#p7p10").html(projectInfo["WYD"].maxAccumOffset);
+                    $("#p7p11").html(projectInfo["WYD"].maxChangeRateCode);
+                    $("#p7p12").html(projectInfo["WYD"].maxChangeRate);
+                    $("#p7p13").html(projectInfo["WYD"].warnAccum);
+                    $("#p7p14").html(projectInfo["WYD"].controlAccum);
+                    $("#p7p15").html(projectInfo["WYD"].warnSingleRate);
+                }
+                if (projectInfo["MT"] != null) {
+                    $("#p7p17").html(projectInfo["MT"].maxCalValCode);
+                    $("#p7p18").html(projectInfo["MT"].maxCalVal);
+                    $("#p7p19").html(projectInfo["MT"].maxChangeRateCode);
+                    $("#p7p20").html(projectInfo["MT"].maxChangeRate);
+                    $("#p7p21").html(projectInfo["MT"].warnAccum);
+                    $("#p7p22").html(projectInfo["MT"].controlAccum);
+                    //                             $("#p7p23").html(projectInfo["MT"].warnSingleRate);
+                }
+                if (projectInfo["SM"] != null) {
+                    $("#p7p25").html(projectInfo["SM"].maxAccumOffsetCode);
+                    $("#p7p26").html(projectInfo["SM"].maxAccumOffset);
+                    $("#p7p27").html(projectInfo["SM"].maxChangeRateCode);
+                    $("#p7p28").html(projectInfo["SM"].maxChangeRate);
+                    $("#p7p29").html(projectInfo["SM"].warnAccum);
+                    $("#p7p30").html(projectInfo["SM"].controlAccum);
+                    $("#p7p31").html(projectInfo["SM"].warnSingleRate);
+                }
+                if (projectInfo["ZGD"] != null) {
+                    $("#p7p33").html(projectInfo["ZGD"].maxAccumOffsetCode);
+                    $("#p7p34").html(projectInfo["ZGD"].maxAccumOffset);
+                    $("#p7p35").html(projectInfo["ZGD"].maxChangeRateCode);
+                    $("#p7p36").html(projectInfo["ZGD"].maxChangeRate);
+                    $("#p7p37").html(projectInfo["ZGD"].warnAccum);
+                    $("#p7p38").html(projectInfo["ZGD"].controlAccum);
+                    $("#p7p39").html(projectInfo["ZGD"].warnSingleRate);
+                }
+                if (projectInfo["SW"] != null) {
+                    $("#p7p41").html(projectInfo["SW"].maxAccumOffsetCode);
+                    $("#p7p42").html(projectInfo["SW"].maxAccumOffset);
+                    $("#p7p43").html(projectInfo["SW"].maxChangeRateCode);
+                    $("#p7p44").html(projectInfo["SW"].maxChangeRate);
+                    $("#p7p45").html(projectInfo["SW"].warnAccum);
+                    $("#p7p46").html(projectInfo["SW"].controlAccum);
+                    $("#p7p47").html(projectInfo["SW"].warnSingleRate);
+                }
+                if (projectInfo["CX"] != null) {
+                    $("#p7p49").html(projectInfo["CX"].maxAccumOffsetCode);
+                    $("#p7p50").html(projectInfo["CX"].maxAccumOffset);
+                    $("#p7p51").html(projectInfo["CX"].maxChangeRateCode);
+                    $("#p7p52").html(projectInfo["CX"].maxChangeRate);
+                    $("#p7p53").html(projectInfo["CX"].warnAccum);
+                    $("#p7p54").html(projectInfo["CX"].controlAccum);
+                    $("#p7p55").html(projectInfo["CX"].warnSingleRate);
+                }
+                if (projectInfo["LZ"] != null) {
+                    //立柱
+                    $("#p7p57").html(projectInfo["LZ"].maxAccumOffsetCode);
+                    $("#p7p58").html(projectInfo["LZ"].maxAccumOffset);
+                    $("#p7p59").html(projectInfo["LZ"].maxChangeRateCode);
+                    $("#p7p60").html(projectInfo["LZ"].maxChangeRate);
+                    $("#p7p61").html(projectInfo["LZ"].warnAccum);
+                    $("#p7p62").html(projectInfo["LZ"].controlAccum);
+                    $("#p7p63").html(projectInfo["LZ"].warnSingleRate);
+                }
+                if (projectInfo["ZC"] != null) {
+                    //支撑轴力
+                    $("#p7p65").html(projectInfo["ZC"].maxCalValCode);
+                    $("#p7p66").html(projectInfo["ZC"].maxCalVal);
+                    $("#p7p67").html(projectInfo["ZC"].maxChangeRateCode);
+                    $("#p7p68").html(projectInfo["ZC"].maxChangeRate);
+                    $("#p7p69").html(projectInfo["ZC"].warnAccum);
+                    $("#p7p70").html(projectInfo["ZC"].controlAccum);
+                    //                             $("#p7p71").html(projectInfo["ZC"].warnSingleRate);
+                }
+            });
+        });
+        $("#nextPage7").bind('click', function() {
+            $("#exportData7").hide();
+            $("#exportData8").hide();
+            $("#exportData7Button").hide();
+            $("#exportData9").show();
+            if (reportDataObj != null) {
+                $("#p8p1").val(reportDataObj.p8p1);
+                $("#p8p2").val(reportDataObj.p8p2);
+                $("#p8p3").val(reportDataObj.p8p3);
+                $("#p8p4").val(reportDataObj.p8p4);
+                $("#p8p5").val(reportDataObj.p8p5);
+                $("#p8p6").val(reportDataObj.p8p6);
+                $("#p8p7").val(reportDataObj.p8p7);
+                $("#p8p8").val(reportDataObj.p8p8);
+                $("#p8p9").val(reportDataObj.p8p9);
+                $("#p8p10").val(reportDataObj.p8p10);
+                $("#p8p11").val(reportDataObj.p8p11);
+            }
+        });
+        $("#postInfo").bind('click', function() {
+            var p1p1 = $("#p1p1").val();
+            var p1p2 = $("#p1p2").val();
+            var p1p3 = $("#p1p3").val();
+            var p1p4 = $("#p1p4").val();
+            var p1p5 = $("#p1p5").val();
+            var p1p6 = $("#p1p6").val();
+            var p2p1 = $("#p2p1").val();
+            var p2p2 = $("#p2p2").val();
+            var p2p3 = $("#p2p3").val();
+            var p2p4 = $("#p2p4").val();
+            var p2p5 = $("#p2p5").val();
+            var p2p6 = $("#p2p6").val();
+            var p4p1 = $("#p4p1").val();
+            var p4p2 = $("#p4p2").val();
+            var p4p3 = $("#p4p3").val();
+            var p4p4 = $("#p4p4").val();
+            var p4p5 = $("#p4p5").val();
+            var p4p6 = $("#p4p6").val();
+            var p4p7 = $("#p4p7").val();
+            var p4p8 = $("#p4p8").val();
+            var p4p9 = $("#p4p9").val();
+            var p4p10 = $("#p4p10").val();
+            var p4p11 = $("#p4p11").val();
+            var p4p12 = $("#p4p12").val();
+            var p4p13 = $("#p4p13").val();
+            var p4p14 = $("#p4p14").val();
+            var p4p15 = $("#p4p15").val();
+            var p4p16 = $("#p4p16").val();
+            var p4p17 = $("#p4p17").val();
+            var p4p18 = $("#p4p18").val();
+            var p5p1 = $("#p5p1").val();
+            var p5p2 = $("#p5p2").val();
+            var p5p3 = $("#p5p3").val();
+            var p5p4 = $("#p5p4").val();
+            var p5p5 = $("#p5p5").val();
+            var p5p6 = $("#p5p6").val();
+            var p5p7 = $("#p5p7").val();
+            var p5p8 = $("#p5p8").val();
+            var p5p9 = $("#p5p9").val();
+            var p5p10 = $("#p5p10").val();
+            var p5p11 = $("#p5p11").val();
+            var p5p12 = $("#p5p12").val();
+            var p5p13 = $("#p5p13").val();
+            var p5p14 = $("#p5p14").val();
+            var p5p15 = $("#p5p15").val();
+            var p5p16 = $("#p5p16").val();
+            var p5p17 = $("#p5p17").val();
+            var p5p18 = $("#p5p18").val();
+            var p5p19 = $("#p5p19").val();
+            var p5p20 = $("#p5p20").val();
+            var p5p21 = $("#p5p21").val();
+            var p5p22 = $("#p5p22").val();
+            var p5p23 = $("#p5p23").val();
+            var p5p24 = $("#p5p24").val();
+            var p5p25 = $("#p5p25").val();
+            var p6p1 = $("#p6p1").val();
+            var p6p2 = $("#p6p2").val();
+            var p6p3 = $("#p6p3").val();
+            var p6p4 = $("#p6p4").val();
+            var p6p5 = $("#p6p5").val();
+            var p6p6 = $("#p6p6").val();
+            var p6p7 = $("#p6p7").val();
+            var p6p8 = $("#p6p8").val();
+            var p6p9 = $("#p6p9").val();
+            var p6p10 = $("#p6p10").val();
+            var p6p11 = $("#p6p11").val();
+            var p6p12 = $("#p6p12").val();
+            var p6p13 = $("#p6p13").val();
+            var p6p14 = $("#p6p14").val();
+            var p6p15 = $("#p6p15").val();
+            var p6p16 = $("#p6p16").val();
+            var p6p17 = $("#p6p17").val();
+            var p6p18 = $("#p6p18").val();
+            var p6p19 = $("#p6p19").val();
+            var p6p20 = $("#p6p20").val();
+            var p6p21 = $("#p6p21").val();
+            var p6p22 = $("#p6p22").val();
+            var p6p23 = $("#p6p23").val();
+            var p6p24 = $("#p6p24").val();
+            var p6p25 = $("#p6p25").val();
+            var p6p26 = $("#p6p26").val();
+            var p6p27 = $("#p6p27").val();
+            var p6p28 = $("#p6p28").val();
+            var p6p29 = $("#p6p29").val();
+            var p6p30 = $("#p6p30").val();
+            var p6p31 = $("#p6p31").val();
+            var p6p32 = $("#p6p32").val();
+            var p6p33 = $("#p6p33").val();
+            var p6p34 = $("#p6p34").val();
+            var p6p35 = $("#p6p35").val();
+            var p6p36 = $("#p6p36").val();
+            var p6p37 = $("#p6p37").val();
+            var p6p38 = $("#p6p38").val();
+            var p6p39 = $("#p6p39").val();
+            var p6p40 = $("#p6p40").val();
+            var p6p41 = $("#p6p41").val();
+            var p6p42 = $("#p6p42").val();
+            var p6p43 = $("#p6p43").val();
+            var p6p44 = $("#p6p44").val();
+            var p6p45 = $("#p6p45").val();
+            var p6p46 = $("#p6p46").val();
+            var p6p47 = $("#p6p47").val();
+            var p6p48 = $("#p6p48").val();
+            var p6p49 = $("#p6p49").val();
+            var p6p50 = $("#p6p50").val();
+            var p6p51 = $("#p6p51").val();
+            var p6p52 = $("#p6p52").val();
+            var p6p53 = $("#p6p53").val();
+            var p6p54 = $("#p6p54").val();
+            var p6p55 = $("#p6p55").val();
+            var p6p56 = $("#p6p56").val();
+            var p6p57 = $("#p6p57").val();
+            var p6p58 = $("#p6p58").val();
+            var p6p59 = $("#p6p59").val();
+            var p6p60 = $("#p6p60").val();
+            var p6p61 = $("#p6p61").val();
+            var p6p62 = $("#p6p62").val();
+            var p6p63 = $("#p6p63").val();
+            var p6p64 = $("#p6p64").val();
+            var p6p65 = $("#p6p65").val();
+            var p6p66 = $("#p6p66").val();
+            var p7p1 = $("#p7p1").html();
+            var p7p2 = $("#p7p2").html();
+            var p7p3 = $("#p7p3").html();
+            var p7p4 = $("#p7p4").html();
+            var p7p5 = $("#p7p5").html();
+            var p7p6 = $("#p7p6").html();
+            var p7p7 = $("#p7p7").html();
+            var p7p8 = $("#p7p8").val();
+            var p7p9 = $("#p7p9").html();
+            var p7p10 = $("#p7p10").html();
+            var p7p11 = $("#p7p11").html();
+            var p7p12 = $("#p7p12").html();
+            var p7p13 = $("#p7p13").html();
+            var p7p14 = $("#p7p14").html();
+            var p7p15 = $("#p7p15").html();
+            var p7p16 = $("#p7p16").val();
+            var p7p17 = $("#p7p17").html();
+            var p7p18 = $("#p7p18").html();
+            var p7p19 = $("#p7p19").html();
+            var p7p20 = $("#p7p20").html();
+            var p7p21 = $("#p7p21").html();
+            var p7p22 = $("#p7p22").html();
+            //             var p7p23 = $("#p7p23").html();
+            var p7p24 = $("#p7p24").val();
+            var p7p25 = $("#p7p25").html();
+            var p7p26 = $("#p7p26").html();
+            var p7p27 = $("#p7p27").html();
+            var p7p28 = $("#p7p28").html();
+            var p7p29 = $("#p7p29").html();
+            var p7p30 = $("#p7p30").html();
+            var p7p31 = $("#p7p31").html();
+            var p7p32 = $("#p7p32").val();
+            var p7p33 = $("#p7p33").html();
+            var p7p34 = $("#p7p34").html();
+            var p7p35 = $("#p7p35").html();
+            var p7p36 = $("#p7p36").html();
+            var p7p37 = $("#p7p37").html();
+            var p7p38 = $("#p7p38").html();
+            var p7p39 = $("#p7p39").html();
+            var p7p40 = $("#p7p40").val();
+            var p7p41 = $("#p7p41").html();
+            var p7p42 = $("#p7p42").html();
+            var p7p43 = $("#p7p43").html();
+            var p7p44 = $("#p7p44").html();
+            var p7p45 = $("#p7p45").html();
+            var p7p46 = $("#p7p46").html();
+            var p7p47 = $("#p7p47").html();
+            var p7p48 = $("#p7p48").val();
+            var p7p49 = $("#p7p49").html();
+            var p7p50 = $("#p7p50").html();
+            var p7p51 = $("#p7p51").html();
+            var p7p52 = $("#p7p52").html();
+            var p7p53 = $("#p7p53").html();
+            var p7p54 = $("#p7p54").html();
+            var p7p55 = $("#p7p55").html();
+            var p7p56 = $("#p7p56").val();
+            var p7p57 = $("#p7p57").html();
+            var p7p58 = $("#p7p58").html();
+            var p7p59 = $("#p7p59").html();
+            var p7p60 = $("#p7p60").html();
+            var p7p61 = $("#p7p61").html();
+            var p7p62 = $("#p7p62").html();
+            var p7p63 = $("#p7p63").html();
+            var p7p64 = $("#p7p64").val();
+            var p7p65 = $("#p7p65").html();
+            var p7p66 = $("#p7p66").html();
+            var p7p67 = $("#p7p67").html();
+            var p7p68 = $("#p7p68").html();
+            var p7p69 = $("#p7p69").html();
+            var p7p70 = $("#p7p70").html();
+            //             var p7p71 = $("#p7p71").html();
+            var p7p72 = $("#p7p72").val();
+            var p8p1 = $("#p8p1").val();
+            var p8p2 = $("#p8p2").val();
+            var p8p2 = $("#p8p2").val();
+            var p8p3 = $("#p8p3").val();
+            var p8p4 = $("#p8p4").val();
+            var p8p5 = $("#p8p5").val();
+            var p8p6 = $("#p8p6").val();
+            var p8p7 = $("#p8p7").val();
+            var p8p8 = $("#p8p8").val();
+            var p8p9 = $("#p8p9").val();
+            var p8p10 = $("#p8p10").val();
+            var p8p11 = $("#p8p11").val();
+            //相关仪器规范
+            var p1p78 = $("#p1p78").val()== undefined  ? "":$("#p1p78").val();
+            var p1p79 = $("#p1p79").val()== undefined  ? "":$("#p1p79").val();
+            var p1p80 = $("#p1p80").val()== undefined  ? "":$("#p1p80").val();
+            var p1p81 = $("#p1p81").val()== undefined  ? "":$("#p1p81").val();
+            var p1p82 = $("#p1p82").val()== undefined  ? "":$("#p1p82").val();
+            var p1p83 = $("#p1p83").val()== undefined  ? "":$("#p1p83").val();
+            var p1p84 = $("#p1p84").val()== undefined  ? "":$("#p1p84").val();
+            var p1p85 = $("#p1p85").val()== undefined  ? "":$("#p1p85").val();
+            var p1p86 = $("#p1p86").val()== undefined  ? "":$("#p1p86").val();
+            var p1p87 = $("#p1p87").val()== undefined  ? "":$("#p1p87").val();
+            var p1p88 = $("#p1p88").val()== undefined  ? "":$("#p1p88").val();
+            var p1p89 = $("#p1p89").val()== undefined  ? "":$("#p1p89").val();
+            var p1p90 = $("#p1p90").val()== undefined  ? "":$("#p1p90").val();
+            var p1p91 = $("#p1p91").val()== undefined  ? "":$("#p1p91").val();
+            var p1p92 = $("#p1p92").val()== undefined  ? "":$("#p1p92").val();
+            var p1p93 = $("#p1p93").val()== undefined  ? "":$("#p1p93").val();
+            var p1p94 = $("#p1p94").val()== undefined  ? "":$("#p1p94").val();
+            var p1p95 = $("#p1p95").val()== undefined  ? "":$("#p1p95").val();
+            $.MyCommon.PageLoading({ loadingTips: '周报导出中,请稍候...' });
+            $.post("weeklyReport", {
+                p1p1: p1p1,
+                p1p2: p1p2,
+                p1p3: p1p3,
+                p1p4: p1p4,
+                p1p5: p1p5,
+                p1p6: p1p6,
+                p2p1: p2p1,
+                p2p2: p2p2,
+                p2p3: p2p3,
+                p2p4: p2p4,
+                p2p5: p2p5,
+                p2p6: p2p6,
+                p4p1: p4p1,
+                p4p2: p4p2,
+                p4p3: p4p3,
+                p4p4: p4p4,
+                p4p5: p4p5,
+                p4p6: p4p6,
+                p4p7: p4p7,
+                p4p8: p4p8,
+                p4p9: p4p9,
+                p4p10: p4p10,
+                p4p11: p4p11,
+                p4p12: p4p12,
+                p4p13: p4p13,
+                p4p14: p4p14,
+                p4p15: p4p15,
+                p4p16: p4p16,
+                p4p17: p4p17,
+                p4p18: p4p18,
+                p5p1: p5p1,
+                p5p2: p5p2,
+                p5p3: p5p3,
+                p5p4: p5p4,
+                p5p5: p5p5,
+                p5p6: p5p6,
+                p5p7: p5p7,
+                p5p8: p5p8,
+                p5p9: p5p9,
+                p5p10: p5p10,
+                p5p11: p5p11,
+                p5p12: p5p12,
+                p5p13: p5p13,
+                p5p14: p5p14,
+                p5p15: p5p15,
+                p5p16: p5p16,
+                p5p17: p5p17,
+                p5p18: p5p18,
+                p5p19: p5p19,
+                p5p20: p5p20,
+                p5p21: p5p21,
+                p5p22: p5p22,
+                p5p23: p5p23,
+                p5p24: p5p24,
+                p5p25: p5p25,
+                p6p1: p6p1,
+                p6p2: p6p2,
+                p6p3: p6p3,
+                p6p4: p6p4,
+                p6p5: p6p5,
+                p6p6: p6p6,
+                p6p7: p6p7,
+                p6p8: p6p8,
+                p6p9: p6p9,
+                p6p10: p6p10,
+                p6p11: p6p11,
+                p6p12: p6p12,
+                p6p13: p6p13,
+                p6p14: p6p14,
+                p6p15: p6p15,
+                p6p16: p6p16,
+                p6p17: p6p17,
+                p6p18: p6p18,
+                p6p19: p6p19,
+                p6p20: p6p20,
+                p6p21: p6p21,
+                p6p22: p6p22,
+                p6p23: p6p23,
+                p6p24: p6p24,
+                p6p25: p6p25,
+                p6p26: p6p26,
+                p6p27: p6p27,
+                p6p28: p6p28,
+                p6p29: p6p29,
+                p6p30: p6p30,
+                p6p31: p6p31,
+                p6p32: p6p32,
+                p6p33: p6p33,
+                p6p34: p6p34,
+                p6p35: p6p35,
+                p6p36: p6p36,
+                p6p37: p6p37,
+                p6p38: p6p38,
+                p6p39: p6p39,
+                p6p40: p6p40,
+                p6p41: p6p41,
+                p6p42: p6p42,
+                p6p43: p6p43,
+                p6p44: p6p44,
+                p6p45: p6p45,
+                p6p46: p6p46,
+                p6p47: p6p47,
+                p6p48: p6p48,
+                p6p49: p6p49,
+                p6p50: p6p50,
+                p6p51: p6p51,
+                p6p52: p6p52,
+                p6p53: p6p53,
+                p6p54: p6p54,
+                p6p55: p6p55,
+                p6p56: p6p56,
+                p6p57: p6p57,
+                p6p58: p6p58,
+                p6p59: p6p59,
+                p6p60: p6p60,
+                p6p61: p6p61,
+                p6p62: p6p62,
+                p6p63: p6p63,
+                p6p64: p6p64,
+                p6p65: p6p65,
+                p6p66: p6p66,
+                p7p1: p7p1,
+                p7p2: p7p2,
+                p7p3: p7p3,
+                p7p4: p7p4,
+                p7p5: p7p5,
+                p7p6: p7p6,
+                p7p7: p7p7,
+                p7p8: p7p8,
+                p7p9: p7p9,
+                p7p10: p7p10,
+                p7p11: p7p11,
+                p7p12: p7p12,
+                p7p13: p7p13,
+                p7p14: p7p14,
+                p7p15: p7p15,
+                p7p16: p7p16,
+                p7p17: p7p17,
+                p7p18: p7p18,
+                p7p19: p7p19,
+                p7p20: p7p20,
+                p7p21: p7p21,
+                p7p22: p7p22,
+                //                 p7p23: p7p23,
+                p7p24: p7p24,
+                p7p25: p7p25,
+                p7p26: p7p26,
+                p7p27: p7p27,
+                p7p28: p7p28,
+                p7p29: p7p29,
+                p7p30: p7p30,
+                p7p31: p7p31,
+                p7p32: p7p32,
+                p7p33: p7p33,
+                p7p34: p7p34,
+                p7p35: p7p35,
+                p7p36: p7p36,
+                p7p37: p7p37,
+                p7p38: p7p38,
+                p7p39: p7p39,
+                p7p40: p7p40,
+                p7p41: p7p41,
+                p7p42: p7p42,
+                p7p43: p7p43,
+                p7p44: p7p44,
+                p7p45: p7p45,
+                p7p46: p7p46,
+                p7p47: p7p47,
+                p7p48: p7p48,
+                p7p49: p7p49,
+                p7p50: p7p50,
+                p7p51: p7p51,
+                p7p52: p7p52,
+                p7p53: p7p53,
+                p7p54: p7p54,
+                p7p55: p7p55,
+                p7p56: p7p56,
+                p7p57: p7p57,
+                p7p58: p7p58,
+                p7p59: p7p59,
+                p7p60: p7p60,
+                p7p61: p7p61,
+                p7p62: p7p62,
+                p7p63: p7p63,
+                p7p64: p7p64,
+                p7p65: p7p65,
+                p7p66: p7p66,
+                p7p67: p7p67,
+                p7p68: p7p68,
+                p7p69: p7p69,
+                p7p70: p7p70,
+                //                 p7p71: p7p71,
+                p7p72: p7p72,
+                p8p1: p8p1,
+                p8p2: p8p2,
+                p8p3: p8p3,
+                p8p4: p8p4,
+                p8p5: p8p5,
+                p8p6: p8p6,
+                p8p7: p8p7,
+                p8p8: p8p8,
+                p8p9: p8p9,
+                p8p10: p8p10,
+                p8p11: p8p11,
+                //仪器相关规范
+                p1p78:p1p78,
+                p1p79:p1p79,
+                p1p80:p1p80,
+                p1p81:p1p81,
+                p1p82:p1p82,
+                p1p83:p1p83,
+                p1p84:p1p84,
+                p1p85:p1p85,
+                p1p86:p1p86,
+                p1p87:p1p87,
+                p1p88:p1p88,
+                p1p89:p1p89,
+                p1p90:p1p90,
+                p1p91:p1p91,
+                p1p92:p1p92,
+                p1p93:p1p93,
+                p1p94:p1p94,
+                p1p95:p1p95,
+                reportUuid: (reportUuid == null || reportUuid == undefined) ? null : reportUuid
+            }, function(data, status) {
+                //p1p1:编号  p1p2:工程名称  p1p3:工程地址 p1p4:委托单位 p1p5:监测起始时间p1p6:监测终止时间
+                //p2p1:编号  p2p2:检测单位地址 p2p3:邮政编码  p2p4:联系电话 p2p5:联系人p2p6:重要提示
+                //p4p1:工程名称 p4p2:工程地址 p4p3:建设单位 p4p4:勘察单位 p4p5:设计单位  p4p6:施工单位 p4p7:监理单位 p4p8:项目用地面积 p4p9:基坑面积 p4p10:基坑开挖深度 p4p11:基坑安全等级 p4p12:基坑开挖周长 
+                //p4p13:基坑开挖面积 p4p14:基坑监测日期 p4p15:基坑监测期数 p4p16:本期工况 p4p17:监测目的 p4p18:备 注 
+                //p5p1:水准仪规格型号,p5p2:水准仪编号,p5p3:水准仪校准证号,p5p4:水准仪有效日期,p5p5:因瓦条码水准标尺规格型号,p5p6:因瓦条码水准标尺编号,p5p7:因瓦条码水准标尺校准证号,p5p8:因瓦条码水准标尺有效日期,
+                //p5p9:振弦读数仪规格型号,p5p10:振弦读数仪编号,p5p11:振弦读数仪校准证号,p5p12:振弦读数仪有效日期  
+                //p5p13:振弦水位计规格型号,p5p14:振弦水位计编号,p5p15:振弦水位计校准证号,p5p16:振弦水位计有效日期,p5p17:全站仪规格型号,p5p18:全站仪编号,p5p19:全站仪校准证号,p5p20:全站仪有效日期,p5p21:测斜仪规格型号,
+                //p5p22:测斜仪编号,p5p23:测斜仪校准证号,p5p24:测斜仪有效日期,p5p25:监测标准     
+                //p6p1:围护墙(边坡)顶部水平位移合同监测点数,p6p2:围护墙(边坡)顶部水平位移已设置监测点,p6p3:围护墙(边坡)顶部水平位移破坏监测点,p6p4:围护墙(边坡)顶部水平位移剩余监测点,p6p5:围护墙(边坡)顶部水平位移本期完成量,
+                //p6p6:围护墙(边坡)顶部水平位移累计完成量,p6p7:围护墙(边坡)顶部水平位移备注
+                //p6p8:围护墙(边坡)顶部竖向位移合同监测点数,p6p9:围护墙(边坡)顶部竖向位移已设置监测点,p6p10:围护墙(边坡)顶部竖向位移破坏监测点,p6p11:围护墙(边坡)顶部竖向位移剩余监测点,p6p12:围护墙(边坡)顶部竖向位移本期完成量,
+                //p6p13:围护墙(边坡)顶部竖向位移累计完成量,p6p14:围护墙(边坡)顶部竖向位移备注
+                //p6p15:周边建筑物竖向位移合同监测点数,p6p16:周边建筑物竖向位移已设置监测点,p6p17:周边建筑物竖向位移破坏监测点,p6p18:周边建筑物竖向位移剩余监测点,p6p19:周边建筑物竖向位移本期完成量,p6p20:周边建筑物竖向位移累计完成量,
+                //p6p21:周边建筑物竖向位移备注,p6p22:周边管线竖向位移合同监测点数,p6p23:周边管线竖向位移已设置监测点,p6p24:周边管线竖向位移破坏监测点,p6p25:周边管线竖向位移剩余监测点,p6p26:周边管线竖向位移本期完成量,p6p27:周边管线竖向位移累计完成量,
+                //p6p28:周边管线竖向位移备注,p6p29:支护结构深层水平位移合同监测点数,p6p30:支护结构深层水平位移已设置监测点,p6p31:支护结构深层水平位移破坏监测点,p6p32:支护结构深层水平位移剩余监测点,p6p33:支护结构深层水平位移本期完成量,p6p34:支护结构深层水平位移累计完成量,
+                //p6p35:支护结构深层水平位移备注,p6p36:锚索内力监测点合同监测点数,p6p37:锚索内力监测点已设置监测点,p6p38:锚索内力监测点破坏监测点,p6p39:锚索内力监测点剩余监测点,p6p40:锚索内力监测点本期完成量,p6p41:锚索内力监测点累计完成量,p6p42:锚索内力监测点备注
+                //p6p43:地下水位监测点合同监测点数,p6p44:地下水位监测点已设置监测点,p6p45:地下水位监测点破坏监测点,p6p46:地下水位监测点剩余监测点,p6p47:地下水位监测点本期完成量,p6p48:地下水位监测点累计完成量,p6p49:地下水位监测点备注
+                //p6p50:立柱竖向位移合同监测点数,p6p51:立柱竖向位移已设置监测点,p6p52:立柱竖向位移破坏监测点,p6p53:立柱竖向位移剩余监测点,p6p54:立柱竖向位移本期完成量,p6p55:立柱竖向位移累计完成量,p6p56:立柱竖向位移备注
+                //p6p57:支撑内力合同监测点数,p6p58:支撑内力已设置监测点,p6p59:支撑内力破坏监测点,p6p60:支撑内力剩余监测点,p6p61:支撑内力本期完成量,p6p62:支撑内力累计完成量,p6p63:支撑内力备注
+                //p7p1:围护墙(边坡)顶部水平位移累计变化点号,p7p2:围护墙(边坡)顶部水平位移累计变化最大值,p7p3:围护墙(边坡)顶部水平位移变化速率点号,p7p4:围护墙(边坡)顶部水平位移变化速率最大值,p7p5:围护墙(边坡)顶部水平位移报警指标报警值,
+                //p7p6:围护墙(边坡)顶部水平位移报警指标允许值,p7p7:围护墙(边坡)顶部水平位移报警指标变化速率,p7p8:围护墙(边坡)顶部水平位移备注
+                //p7p9:围护墙(边坡)顶部竖向位移累计变化点号,p7p10:围护墙(边坡)顶部竖向位移累计变化最大值,p7p11:围护墙(边坡)顶部竖向位移变化速率点号,p7p12:围护墙(边坡)顶部竖向位移变化速率最大值,p7p13:围护墙(边坡)顶部竖向位移报警指标报警值,
+                //p7p14:围护墙(边坡)顶部竖向位移报警指标允许值,p7p15:围护墙(边坡)顶部竖向位移报警指标变化速率,p7p16:围护墙(边坡)顶部竖向位移备注
+                //p7p17:锚杆内力累计变化点号,p7p18:锚杆内力累计变化最大值,p7p19:锚杆内力变化速率点号,p7p20:锚杆内力变化速率最大值,p7p21:锚杆内力报警指标报警值,p7p22:锚杆内力报警指标允许值,p7p23:锚杆内力报警指标变化速率,p7p24:锚杆内力备注
+                //p7p25:周边建筑物竖向位移累计变化点号,p7p26:周边建筑物竖向位移累计变化最大值,p7p27:周边建筑物竖向位移变化速率点号,p7p28:周边建筑物竖向位移变化速率最大值,p7p29:周边建筑物竖向位移报警指标报警值,p7p30:周边建筑物竖向位移报警指标允许值,
+                //p7p31:周边建筑物竖向位移报警指标变化速率,p7p32:周边建筑物竖向位移内力备注
+                //p7p33:周边管线竖向位移累计变化点号,p7p34:周边管线竖向位移累计变化最大值,p7p35:周边管线竖向位移变化速率点号,p7p36:周边管线竖向位移变化速率最大值,p7p37:周边管线竖向位移报警指标报警值,p7p38:周边管线竖向位移报警指标允许值,
+                //p7p39:周边管线竖向位移报警指标变化速率,p7p40:周边管线竖向位移备注
+                //p7p41:地下水位累计变化点号,p7p42:地下水位累计变化最大值,p7p43:地下水位变化速率点号,p7p44:地下水位变化速率最大值,p7p45:地下水位报警指标报警值,p7p46:地下水位报警指标允许值,p7p47:地下水位报警指标变化速率,p7p48:地下水位备注
+                //p7p49:支护结构深层水平位移累计变化点号,p7p50:支护结构深层水平位移累计变化最大值,p7p51:支护结构深层水平位移变化速率点号,p7p52:支护结构深层水平位移变化速率最大值,p7p53:支护结构深层水平位移报警指标报警值,p7p54:支护结构深层水平位移报警指标允许值,
+                //p7p55:支护结构深层水平位移报警指标变化速率,p7p56:支护结构深层水平位移备注
+                //p7p57:立柱竖向位移累计变化点号,p7p58:立柱竖向位移累计变化最大值,p7p59:立柱竖向位移变化速率点号,p7p60:立柱竖向位移变化速率最大值,p7p61:立柱竖向位移报警指标报警值,p7p62:立柱竖向位移报警指标允许值,p7p63:立柱竖向位移报警指标变化速率,p7p64:立柱竖向位移备注
+                //p7p65:支撑内力累计变化点号,p7p66:支撑内力累计变化最大值,p7p67:支撑内力变化速率点号,p7p68:支撑内力变化速率最大值,p7p69:支撑内力报警指标报警值,p7p70:支撑内力报警指标允许值,p7p71:支撑内力报警指标变化速率,p7p72:支撑内力备注
+                //p8p1:分析及建议,p8p2:主要监测人1 ,p8p3:上岗证号1,p8p4:主要监测人2,p8p5:上岗证号2,p8p6:报告编写人 ,p8p7:上岗证号3,p8p8:报告审核人 ,p8p9:上岗证号4,p8p10:报告批准人,p8p11:职务 
+                if (JSON.parse(data).result == 0) {
+                    if (JSON.parse(data).fileUrl != "" && JSON.parse(data).fileUrl != undefined) {
+                        window.location.href = JSON.parse(data).fileUrl;
+                        $('#loadingPage').remove();
+                    } else {
+                        swal({ title: "导出失败！", text: "返回地址为空！", type: "error" });
+                        $('#loadingPage').remove();
+                    }
+                }
+            });
+        });
+        //额外附件
+        $("#otherInfo").bind('click', function() {
+            $("#addtionDialog").modal("show");
+        });
+        $("#saveAddTionBtn").bind("click",function(){
+        	var pjName = $("#p1p2").html();
+            var pjAddress = $("#p1p3").html();
+            var bDateStr = $("#p1p5").val() + " " + "00:00:00";
+            var eDateStr = $("#p1p6").val() + " " + "23:59:59";
+            var p1p78 = $("#p1p78").val()== undefined  ? "":$("#p1p78").val();
+            var p1p79 = $("#p1p79").val()== undefined  ? "":$("#p1p79").val();
+            var p1p80 = $("#p1p80").val()== undefined  ? "":$("#p1p80").val();
+            var p1p81 = $("#p1p81").val()== undefined  ? "":$("#p1p81").val();
+            var p1p82 = $("#p1p82").val()== undefined  ? "":$("#p1p82").val();
+            var p1p83 = $("#p1p83").val()== undefined  ? "":$("#p1p83").val();
+            var p1p84 = $("#p1p84").val()== undefined  ? "":$("#p1p84").val();
+            var p1p85 = $("#p1p85").val()== undefined  ? "":$("#p1p85").val();
+            var p1p86 = $("#p1p86").val()== undefined  ? "":$("#p1p86").val();
+            var p1p87 = $("#p1p87").val()== undefined  ? "":$("#p1p87").val();
+            var p1p88 = $("#p1p88").val()== undefined  ? "":$("#p1p88").val();
+            var p1p89 = $("#p1p89").val()== undefined  ? "":$("#p1p89").val();
+            var p1p90 = $("#p1p90").val()== undefined  ? "":$("#p1p90").val();
+            var p1p91 = $("#p1p91").val()== undefined  ? "":$("#p1p91").val();
+            var p1p92 = $("#p1p92").val()== undefined  ? "":$("#p1p92").val();
+            var p1p93 = $("#p1p93").val()== undefined  ? "":$("#p1p93").val();
+            var p1p94 = $("#p1p94").val()== undefined  ? "":$("#p1p94").val();
+            var p1p95 = $("#p1p95").val()== undefined  ? "":$("#p1p95").val();
+            $("#addtionDialog").modal("hide");
+            //p1p78:围护墙(边坡)顶部水平位移观测仪器  p1p79:围护墙(边坡)顶部水平位移依据规范  p1p80:围护墙(边坡)顶部竖向位移观测仪器 p1p81:围护墙(边坡)顶部竖向位移依据规范 p1p82:锚杆内力观测仪器p1p83:锚杆内力依据规范
+            //p1p84:周边建筑物竖向位移观测仪器 p1p85:周边建筑物竖向位移依据规范  p1p86:周边管线竖向位移观测仪器 p1p87:周边管线竖向位移依据规范 p1p88:地下水位观测仪器 p1p89:地下水位依据规范 p1p90:支护结构深层水平位移观测仪器 p1p91:支护结构深层水平位移依据规范 
+            //p1p92:立柱竖向位移观测仪器 p1p93:立柱竖向位移依据规范 p1p94:支撑内力观测仪器 p1p95:支撑内力依据规范
+            $.MyCommon.PageLoading({ loadingTips: '附件导出中,请稍候...' });
+            $.post("weeklyExport", {
+            	pjName: pjName,
+            	pjAddress:pjAddress,
+            	bDateStr: bDateStr,
+            	eDateStr: eDateStr,
+            	p1p78: p1p78,
+            	p1p79: p1p79,
+            	p1p80: p1p80,
+            	p1p81: p1p81,
+            	p1p82: p1p82,
+            	p1p83: p1p83,
+            	p1p84: p1p84,
+            	p1p85: p1p85,
+            	p1p86: p1p86,
+            	p1p87: p1p87,
+            	p1p88: p1p88,
+            	p1p89: p1p89,
+            	p1p90: p1p90,
+            	p1p91: p1p91,
+            	p1p92: p1p92,
+            	p1p93: p1p93,
+            	p1p94: p1p94,
+            	p1p95: p1p95
+            },function(data, status){
+            	if (JSON.parse(data).result == 0) {
+                    if (JSON.parse(data).fileUrl != "" && JSON.parse(data).fileUrl != undefined) {
+                        window.location.href = JSON.parse(data).fileUrl;
+                        $('#loadingPage').remove();
+                    } else {
+                        swal({ title: "导出失败！", text: "返回地址为空！", type: "error" });
+                        $('#loadingPage').remove();
+                    }
+                }
+            });
+//     		window.open("/smosplat/spDataExport?pjName=" + pjName
+//     						+ "&pjAddress=" + pjAddress + "&bDateStr=" + bDateStr
+//     						+ "&eDateStr=" + eDateStr + "&p1p78=" + p1p78
+//     						+ "&p1p79=" + p1p79 + "&p1p80=" + p1p80 + "&p1p81="
+//     						+ p1p81 + "&p1p82=" + p1p82 + "&p1p83=" + p1p83
+//     						+ "&p1p84=" + p1p84 + "&p1p85=" + p1p85 + "&p1p86="
+//     						+ p1p86 + "&p1p87=" + p1p87 + "&p1p88=" + p1p88
+//     						+ "&p1p89=" + p1p89 + "&p1p90=" + p1p90 + "&p1p91="
+//     						+ p1p91 + "&p1p92=" + p1p92 + "&p1p93=" + p1p93
+//     						+ "&p1p94=" + p1p94 + "&p1p95=" + p1p95);
+        });
+        $("#lastPage2").bind('click', function() {
+            $("#exportData1").show();
+            $("#exportData2").hide();
+        });
+        $("#lastPage3").bind('click', function() {
+            $("#exportData2").show();
+            $("#exportData3").hide();
+            $("#exportData3Button").hide();
+        });
+        $("#lastPage4").bind('click', function() {
+            $("#exportData3").show();
+            $("#exportData3Button").show();
+            $("#exportData4").hide();
+        });
+        $("#lastPage5").bind('click', function() {
+            $("#exportData4").show();
+            $("#exportData5").hide();
+            $("#exportData5Button").hide();
+        });
+        $("#lastPage6").bind('click', function() {
+            $("#exportData5").show();
+            $("#exportData5Button").show();
+            $("#exportData6").hide();
+            $("#exportData6Button").hide();
+        });
+        $("#lastPage7").bind('click', function() {
+            $("#exportData6").show();
+            $("#exportData6Button").show();
+            $("#exportData7").hide();
+            $("#exportData8").hide();
+            $("#exportData7Button").hide();
+        });
+        $("#lastPage8").bind('click', function() {
+            $("#exportData7").show();
+            $("#exportData8").show();
+            $("#exportData7Button").show();
+            $("#exportData9").hide();
+        });
+    });
+    </script>
+</head>
+
+<body id="autoBody">
+    <form id="projectForm" style="height:100%;overflow: auto;"">
+        <input id="formUrl" type="hidden">
+        <input id="projectUuid" type="hidden">
+        <table id="tableHeader" cellpadding="0" cellspacing="0">
+            <tr>
+                <th id="tableName">
+                    周报导出
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData1" cellpadding="0" cellspacing="1">
+            <tr>
+                <th colspan="4" style="height:70px;font-size:40px;color:#000;">
+                    基坑支护工程监测报告
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    编号
+                </th>
+                <td colspan="2">
+                    <textarea name="code" id="p1p1" class="input" style="height:80%;width:70%;" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    工程名称
+                </th>
+                <td colspan="2">
+                    <textarea name="projectName" id="p1p2" class="input" style="height:80%;width:70%;" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    工程地址
+                </th>
+                <td colspan="2">
+                    <textarea name="address" rows="2" cols="20" id="p1p3" class="input" style="height:80%;width:70%;" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    委托单位
+                </th>
+                <td colspan="2">
+                    <textarea name="viewbuildCompany" rows="2" cols="20" id="p1p4" class="input" style="height:80%;width:70%;" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    监测时间
+                </th>
+                <td colspan="1" style="text-align: center"> 
+                    <input  class="btn btn-xs btn-danger" id="p1p5" placeholder="初始日期" type="text" style="height:20px;width:50%;text-align:center;" size="12"  value="">
+                </td>
+                <td colspan="1" style="text-align: center">
+                    <input class="btn btn-xs btn-danger" id="p1p6" placeholder="结束日期" type="text" style="height:20px;width:50%;text-align:center;" size="12"  value="" disabled="disabled">
+                </td>
+            </tr>
+            <tr>
+                <th colspan="4" style="height:30px;">
+                    <button type="button" id="nextPage1" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData2" cellpadding="0" cellspacing="1" style="display:none;">
+            <tr>
+                <th id="infoName" colspan="4" style="height:70px;font-size:30px;color:#000;">
+                    基坑支护工程监测报告
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    编号：
+                </th>
+                <td colspan="2">
+                    <textarea name="code" id="p2p1" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    重要提示
+                </th>
+                <td colspan="2">
+                    <textarea id="p2p6" class="input" style="height:90%;overflow:auto;" required>
+                        1、报告无监测、编写、审核、批准人签字无效。 
+                        2、报告发生改动、换页或剪贴后无效。 
+                        3、未经监测单位同意，报告不得部分复制。 
+                        4、如对监测报告有异议，应于收到报告之日起十五日内向本监测单位书面提出，逾期视为认可监测结果。
+                    </textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    检测单位地址
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p2p2" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    邮 政 编 码
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p2p3" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    联 系 电 话
+                </th>
+                <td colspan="1" style="text-align: center">
+                    <textarea rows="2" cols="20" id="p2p4" class="input" required></textarea>
+                </td>
+                <th colspan="1">
+                    联 系 人
+                </th>
+                <td colspan="1" style="text-align: center">
+                    <textarea rows="2" cols="20" id="p2p5" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="4" style="height:30px;">
+                    <button type="button" id="lastPage2" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="nextPage2" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData3" cellpadding="0" cellspacing="1" style="display:none;height:80%;">
+            <tr>
+                <th colspan="4" style="height:50px;font-size:30px;color:#000;">
+                    目录
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">重要提示</p>
+                    <label class="point" style="border-bottom:1px dotted;width:80%;"></label>
+                    <p style="float:right;margin-right:25px;">1</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">目&#12288&#12288录</p>
+                    <label class="point" style="border-bottom:1px dotted;width:80%;"></label>
+                    <p style="float:right;margin-right:25px;">2</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">1&#12288前言</p>
+                    <label class="point" style="border-bottom:1px dotted;width:80%;"></label>
+                    <p style="float:right;margin-right:25px;">3</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">2&#12288监测标准及设备</p>
+                    <label class="point" style="border-bottom:1px dotted;width:74%;"></label>
+                    <p style="float:right;margin-right:25px;">4</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:50px;float:left;">2.1&#12288监测标准</p>
+                    <label class="point" style="border-bottom:1px dotted;width:72%;"></label>
+                    <p style="float:right;margin-right:25px;">4</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:50px;float:left;">2.2&#12288仪器设备</p>
+                    <label class="point" style="border-bottom:1px dotted;width:72%;"></label>
+                    <p style="float:right;margin-right:25px;">4</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">3&#12288监测项目、工作量及监测点破坏情况</p>
+                    <label class="point" style="border-bottom:1px dotted;width:62%;"></label>
+                    <p style="float:right;margin-right:25px;">5</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">4&#12288监测结果总览</p>
+                    <label class="point" style="border-bottom:1px dotted;width:75%;"></label>
+                    <p style="float:right;margin-right:25px;">6</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">5&#12288分析及建议</p>
+                    <label class="point" style="border-bottom:1px dotted;width:75%;"></label>
+                    <p style="float:right;margin-right:25px;">8</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" class="title">
+                    <p style="margin-left:25px;float:left;">附件 1&#12288监测点平面示意图（1 页）</p>
+                    <label class="point" style="border-bottom:1px dotted;width:65%;"></label>
+                    <p style="float:right;margin-right:25px;">9</p>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData3Button" cellpadding="0" cellspacing="1" style="display:none;height:7%;">
+             <tr>
+                <th colspan="4" style="height:30px;">
+                    <button type="button" id="lastPage3" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="nextPage3" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData4" cellpadding="0" cellspacing="1" style="display:none;">
+            <tr>
+                <th colspan="4" style="height:30px;font-size:20px;color:#000;">
+                    1 前言
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4">
+                    工程概况表（表1）
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    工程名称
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p1" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    工程地址
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p2" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    建设单位
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p3" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    勘察单位
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p4" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    设计单位
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p5" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    施工单位
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p6" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    监理单位
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p7" class="input" required></textarea>
+                </td>
+            </tr>
+            <!--             <tr> -->
+            <!--                 <th colspan="1"> -->
+            <!--                     项目用地面积 -->
+            <!--                 </th> -->
+            <!--                 <td colspan="1"> -->
+            <!--                     <textarea rows="2" cols="20" id="p4p8" class="input" required></textarea> -->
+            <!--                 </td> -->
+            <!--                 <th colspan="1"> -->
+            <!--                     基坑面积 -->
+            <!--                 </th> -->
+            <!--                 <td colspan="1"> -->
+            <!--                     <textarea rows="2" cols="20" id="p4p9" class="input" required></textarea> -->
+            <!--                 </td> -->
+            <!--             </tr> -->
+            <tr>
+                <th colspan="1">
+                    基坑开挖深度
+                </th>
+                <td colspan="1">
+                    <textarea rows="2" cols="20" id="p4p10" class="input" required></textarea>
+                </td>
+                <th colspan="1">
+                    基坑安全等级
+                </th>
+                <td colspan="1">
+                    <textarea rows="2" cols="20" id="p4p11" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    基坑开挖周长
+                </th>
+                <td colspan="1">
+                    <textarea rows="2" cols="20" id="p4p12" class="input" required></textarea>
+                </td>
+                <th colspan="1">
+                    基坑开挖面积
+                </th>
+                <td colspan="1">
+                    <textarea rows="2" cols="20" id="p4p13" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    基坑监测日期
+                </th>
+                <td colspan="1">
+                    <textarea rows="2" cols="20" id="p4p14" class="input" required></textarea>
+                </td>
+                <th colspan="1">
+                    基坑监测期数
+                </th>
+                <td colspan="1">
+                    <textarea rows="2" cols="20" id="p4p15" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    本期工况
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p16" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    监测目的
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p17" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    备 注
+                </th>
+                <td colspan="2">
+                    <textarea rows="2" cols="20" id="p4p18" class="input" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="4" style="height:30px;">
+                    <button type="button" id="lastPage4" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="nextPage4" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData5" cellpadding="0" cellspacing="1" style="display:none;height:80%">
+            <tr>
+                <th colspan="2" style="font-size:15px;color:#000;">
+                    2.1 监测标准
+                </th>
+                <td colspan="6" style="height:35%;">
+                    <textarea rows="2" cols="20" id="p5p25" class="input" style="height:90%;overflow: auto;" required>
+                        （1）《光明平板显示园中小企业总部基地项目基坑支护工程基坑监测平面布置图》（2016.03）； 
+                        （2）《工程测量规范》（GB 50026-2007）； 
+                        （3）《建筑变形测量规范》(JGJ 8-2016) ； 
+                        （4）《建筑地基基础设计规范》（GB 50007-2011）； 
+                        （5）《建筑基坑支护技术规范》（JGJ 120-2012）； 
+                        （6）《深圳市基坑支护技术规范》（SJG 05-2011）； 
+                        （7）《建筑基坑工程监测技术规范》（GB 50497-2009）。
+                    </textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="8" style="height:20px;font-size:15px;color:#000;">
+                    2.2 仪器设备（主要设备情况表)
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData5Button" cellpadding="0" cellspacing="1" style="display:none;height:7%;">
+           <tr>
+                <th colspan="4" style="height:30px;">
+                    <button type="button" id="lastPage5" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="nextPage5" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData6" cellpadding="0" cellspacing="1" style="display:none;height:80%;">
+            <tr>
+                <th colspan="9" style="font-size:20px;color:#000;">
+                    3 监测项目、工作量及监测点破坏情况
+                </th>
+            </tr>
+            <tr>
+                <th colspan="9">
+                    <p id="exportTitle">本项目合同监测数量为
+                        <textarea id="p6p64" class="input" style="width:40px;" required></textarea>次，现已完成
+                        <textarea id="p6p65" class="input" style="width:40px;" required></textarea>次。 本期共进行
+                        <textarea id="p6p66" class="input" style="width:40px;" required></textarea> 次基坑监测工作，完成工作量及监测点破坏情况见表</p>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="9">
+                    本期完成各项工作量及监测点破坏情况表
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    监测项目
+                </th>
+                <th colspan="1">
+                    合同监测点数（点）
+                </th>
+                <th colspan="1">
+                    已设置监测点（点）
+                </th>
+                <th colspan="1">
+                    破坏监测点（点）
+                </th>
+                <th colspan="1">
+                    剩余监测点（点）
+                </th>
+                <th colspan="1">
+                    本期完成量（点·次）
+                </th>
+                <th colspan="1">
+                    累计完成量（点·次）
+                </th>
+                <th colspan="1">
+                    备注
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData6Button" cellpadding="0" cellspacing="1" style="display:none;height:7%;">
+            <tr>
+                <th colspan="9" style="height:20px;">
+                    <button type="button" id="lastPage6" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="nextPage6" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData7" cellpadding="0" cellspacing="1" style="display:none;height:55%;">
+            <tr>
+                <th id="projectName" colspan="10" style="font-size:15px;color:#000;height:20px;">
+                    监测结果汇总1
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="2" colspan="2" class="title">监测项目</th>
+                <th colspan="2" class="title">累计变化 </th>
+                <th colspan="2" class="title">变化速率</th>
+                <th colspan="3" class="title">报警指标</th>
+                <th rowspan="2" class="title">备注</th>
+            </tr>
+            <tr>
+                <th colspan="1" class="title">
+                    点号
+                </th>
+                <th colspan="1" class="title">
+                    最大值
+                </th>
+                <th colspan="1" class="title">
+                    点号
+                </th>
+                <th colspan="1" class="title">
+                    最大值
+                </th>
+                <th colspan="1" class="title">
+                    报警值
+                </th>
+                <th colspan="1" class="title">
+                    允许值
+                </th>
+                <th colspan="1" class="title">
+                    变化速率
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData8" cellpadding="0" cellspacing="1" style="display:none;height:25%;">
+            <tr>
+                <th id="projectName" colspan="9" style="font-size:15px;color:#000;height:20px;">
+                    监测结果汇总2
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="2" colspan="2" class="title">监测项目</th>
+                <th colspan="2" class="title">本次内力值 </th>
+                <th colspan="2" class="title">变化速率</th>
+                <th colspan="2" class="title">报警指标</th>
+                <th rowspan="2" class="title">备注</th>
+            </tr>
+            <tr>
+                <th colspan="1" class="title">
+                    点号
+                </th>
+                <th colspan="1" class="title">
+                    最大值(kN)
+                </th>
+                <th colspan="1" class="title">
+                    点号
+                </th>
+                <th colspan="1" class="title">
+                    变化速率(kN/d)
+                </th>
+                <th colspan="1" class="title">
+                    报警值(kN)
+                </th>
+                <th colspan="1" class="title">
+                    设计值(kN)
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData7Button" cellpadding="0" cellspacing="1" style="display:none;height:7%;">
+            <tr>
+                <th colspan="9" style="height:30px;">
+                    <button type="button" id="lastPage7" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="nextPage7" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-hand-right"></i>&nbsp下一页</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="exportData9" cellpadding="0" cellspacing="1" style="display:none">
+            <tr>
+                <th colspan="4" style="font-size:20px;color:#000;">
+                    5 分析及建议
+                </th>
+            </tr>
+            <tr>
+                <th colspan="4" style="height:120px;">
+                    <textarea name="p8p1" rows="2" cols="20" id="p8p1" class="input" style="height:80%;width:70%;overflow:auto;" required></textarea>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    主要监测人
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p2" class="input" style="required"></textarea>
+                </td>
+                <th colspan="1">
+                    上岗证号
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p3" class="input" style="required"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                主要监测人
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p4" class="input" style="required"></textarea>
+                </td>
+                <th colspan="1">
+                    上岗证号
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p5" class="input" style="required"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    报告编写人
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p6" class="input" style="required"></textarea>
+                </td>
+                <th colspan="1">
+                    上岗证号
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p7" class="input" style="required"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    报告审核人
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p8" class="input" style="required"></textarea>
+                </td>
+                <th colspan="1">
+                    上岗证号
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p9" class="input" style="required"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="1">
+                    报告批准人
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p10" class="input" style="required"></textarea>
+                </td>
+                <th colspan="1">
+                    职务
+                </th>
+                <td colspan="1">
+                    <textarea id="p8p11" class="input" style="required"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="4" style="height:30px;">
+                    <button type="button" id="lastPage8" class="btn btn-xs btn-default">
+                        <strong><i class="glyphicon glyphicon-hand-left"></i>&nbsp上一页</strong>
+                    </button>
+                    <button type="button" id="postInfo" class="btn btn-xs btn-success">
+                        <strong><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp周报导出</strong>
+                    </button>
+                    <button type="button" id="otherInfo" class="btn btn-xs btn-info">
+                        <strong><i class="glyphicon glyphicon-envelope"></i>&nbsp附件导出</strong>
+                    </button>
+                </th>
+            </tr>
+        </table>
+    </form>
+    <!-- 弹出导出附件 -->
+	<div id="addtionDialog" class="modal fade" data-backdrop="false">
+		<div class="modal-dialog" id="otherInfo-content">
+			<div class="modal-content"  style="height: 100%;">
+				<div class="modal-body" id="addtion-modal" style="width:100%;overflow: auto;">
+					<div class="row">
+						<form id="addtionForm">
+							<input id="addtionType" type="hidden">
+							<table id="tableHeader" cellpadding="0" cellspacing="0">
+								<tr>
+									<th id="addtionTitle">附件导出</th>
+								</tr>
+							</table>
+							<table class="tableEditDetail" id="addtionTable" >
+								<tr>
+									<th colspan="4">监测项目</th>
+									<th colspan="4">观测仪器</th>
+									<th colspan="8">依据规范</th>
+								</tr>
+							</table>
+							<p style="margin:5px 3px;float:right;">
+                            <button type="button" id="saveAddTionBtn" class="btn btn-xs btn-success">
+                                <strong><i class="glyphicon glyphicon-ok"></i>&nbsp导出</strong>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                            </button>
+                          </p>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+<!--     <link rel="shortcut icon" href="favicon.ico"> -->
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="common/css/common.css">
+    <link rel="stylesheet" type="text/css" href="project/css/index.css">
+    <script type="text/javascript" src="common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        //控制各大布局区块的宽度和高度
+        //窗口高度
+        var windowHeight = $(window).height();
+        //窗口宽度
+        var windowWidth = $(window).width();
+        //头部高度
+        var headerHeight = $("#headerArea").height();
+        //设置主题宽度和高度
+        $("#mainArea").height(windowHeight - headerHeight);
+        $("#mainArea").width(windowWidth);
+        $.get("getCurrentAccount",function(data,status){
+        	var jsonObj=JSON.parse(data);
+        	var account=jsonObj.account;
+        	if(account.loginName=="superadmin"){
+        		$("#toRoleBtn").hide();
+        	}else{
+        		$("#toRoleBtn").hide();
+        	}
+        	$.post("getWorkerByAccount",{accountUuid:account.accountUuid}, function(data, status) {
+        		var workerT=JSON.parse(data).worker;
+        		 //显示用户名称
+                $("#userName").text(workerT.workerName+"("+account.role.roleName+")");
+        	})
+        	
+        });
+        //获取跳转类型，iframe是地图还是工程列表
+        var type = location.search.substr(1).split('=')[1];
+        if(type=="list"){
+        	$("#mainFrame").attr("src", "projectList");
+        }
+        $("#getMapBack").bind('click',function(){
+        	$("#mainFrame").attr("src", "mapProjectList");
+        });
+        $("#getOut").bind("click",function(){
+        	window.location.href = "/smosplat/";
+//         	$.get("getCurrentAccount",function(data,status){
+//             	var jsonObj=JSON.parse(data);
+//             	var account=jsonObj.account;
+//             	alert(data);
+//             });
+        });
+    });
+    </script>
+    <title>基坑监测预警平台首页</title>
+</head>
+
+<body>
+    <!-- 头部以及菜单 -->
+    <div id="headerArea" >
+        <div class="easyui-layout header">
+            <div data-options="region:'west',border:false" class="noBg" style="width: 500px; height: 100%;">
+                <div class="logo"></div>
+            </div>
+            <div data-options="region:'center',border:false" class="noBg">
+            <div class="adminLogo"></div>
+             <div class="adminInfo">
+                <label id="userName" style="color: #71BDE1; font-weight: bold;float:right;"></label>&nbsp;
+                <label class="userInfoText" style="float:right;">欢迎：</label>
+                </div>
+            </div>
+            <!-- 头部最底下的横条 -->
+            <div data-options="region:'south',border:false" class="header_line">
+                <div class="easyui-layout fitParent">
+                    <div data-options="region:'west',border:false" class="noBg userInfo userInfoText" style="width: 500px; text-align: left;">&nbsp;
+                        <img style="vertical-align: middle;" src="common/image/house.png" /><label id="nowTime"></label>
+                    </div>
+                    <div data-options="region:'center',border:false" class="noBg"></div>
+                    <div data-options="region:'east',border:false" class="noBg" style="width: 500px;">
+                        <div class="fitParent userInfo">
+                            <a id="toRoleBtn" href="#" onclick="window.location.href='/smosplat/role'"  class="userInfoText" data-options="plain:true">角色权限设置</a>
+                            <img style="vertical-align: middle;" src="common/image/sound.png" />&nbsp;
+                            <img style="vertical-align: middle;" src="common/image/user_info_fg.png" />&nbsp;
+                            <a id="getMapBack" class="userInfoText"> 地图 </a> &nbsp;
+                            <img style="vertical-align: middle;" src="common/image/user_info_fg.png" />&nbsp;
+                            <a id="getOut" class="userInfoText"><i class="fa fa fa-sign-out"></i>  退出 </a> &nbsp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 主体部分 -->
+    <div id="mainArea" style="overflow: hidden;">
+        <iframe id="mainFrame" src="mapProjectList" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+</body>
+
+</html>

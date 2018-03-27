@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/uploadUtil.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/projectDoc.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <title>Insert title here</title>
+</head>
+<style type="text/css">
+a {
+    color: #057AB0;
+}
+</style>
+
+<body>
+    <div style="width:100%;height:100%;">
+        <table class="tableEditDetail" cellpadding="0" cellspacing="1">
+             <tr >
+                <th colspan="1" style="background-color: #fff2ec;" >
+                    <label>方案类别</label>
+                </th>
+                <th colspan="1" style="background-color: #fff2ec;">
+                    <label>操作(只支持doc和pdf)</label>
+                </th>
+                <th colspan="2" style="background-color: #fff2ec;">
+                   <label>文件</label>
+                </th>
+            </tr>
+            <tr>
+                <th class="fieldLabel" colspan="1">
+                    <label style="font-weight:normal;">方案审批表:</label>
+                </th>
+                <th colspan="1">
+                    <a id="addApprovalFormBtn" href="#" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp附件上传</a>
+                    <form action="uploadProjectFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="projectDocForm1" style="display:none">
+                        <input id="project_input1" class="input" value="portrait" name="file" type="file" data-show-preview="false">
+                    </form>
+                </th>
+                <td colspan="2" id="approvalForm">
+                </td>
+            </tr>
+            <tr>
+                <th class="fieldLabel" colspan="1">
+                    <label style="font-weight:normal;">基坑监测方案:</label>
+                </th>
+                <th colspan="1">
+                    <a id="addPlanBtn" href="#" class="btn btn-danger btn-xs" ><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp附件上传</a>
+                    <form action="uploadProjectFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="projectDocForm2" style="display:none">
+                        <input id="project_input2" class="input" value="portrait" name="file" type="file" data-show-preview="false">
+                    </form>
+                </th>
+                <td colspan="2" id="plan"></td>
+            </tr>
+            <tr>
+                <th class="fieldLabel" colspan="1">
+                    <label style="font-weight:normal;">其他相关文件:</label>
+                </th>
+                <th colspan="1">
+                    <a id="addOtherFileBtn" href="#" class="btn btn-danger btn-xs" ><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp附件上传</a>
+                    <a id="otherFile" href="#"></a>
+                    <form action="uploadProjectFiles" method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12" id="projectDocForm3" style="display:none">
+                        <input id="project_input3" class="input" value="portrait" name="file" type="file" data-show-preview="false">
+                    </form>
+                </th>
+                <td colspan="2" id="other">
+                </td>
+            </tr>
+        </table>
+<!--         <a id="getTxt" href="#">上传手动数据（测试用）</a> -->
+<!--         <a id="stop" href="#">结束采集（测试用）</a> -->
+    </div>
+</body>
+
+</html>

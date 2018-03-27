@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <style type="text/css">
+    .menuDiv1 {
+        float: left;
+        width: 70px;
+        height: 20px;
+        cursor: pointer;
+        color: #237fd2;
+        margin-left: 2px;
+        padding-top: 10px;
+        padding-left: 30px;
+        background-image: url(/smosplat/common/image/btn_a.jpg);
+    }
+    
+    .menuDiv2 {
+        float: left;
+        width: 70px;
+        height: 20px;
+        cursor: pointer;
+        margin-left: 2px;
+        padding-top: 10px;
+        padding-left: 30px;
+        background-image: url(/smosplat/common/image/btn_hover.jpg);
+    }
+    </style>
+    <title>Insert title here</title>
+</head>
+
+<body class="easyui-layout">
+    <div data-options="region:'north',border:false" style="height:70px;">
+        <div class="easyui-layout" data-options="border:true" style="width:100%;height:26px;background-color:#F4F4F4;">
+            <div class="tableListTitle2" style="margin-top:5px;">
+                <label id="projectName"></label>
+            </div>
+            <div data-options="region:'east',border:false" class="noBg" style="width:200px;height:26px;line-height: 23px;text-align:right;vertical-align: middle;padding-right: 20px;">
+                <a href="projectList" style="height:23px;" class="easyui-linkbutton" data-options="iconCls:'icon-back'">返回工程列表</a>
+            </div>
+        </div>
+        <div id="menu" style="width: 98%; margin: 0 auto; margin-top: 5px; font-size: 12px;">
+            <div id="a" class="menuDiv2" onclick="onFunctionClick(this,'projectInfo')">
+                工程概况
+            </div>
+            <div id="b" class="menuDiv1" onclick="onFunctionClick(this,'projectDoc')">
+                监测方案
+            </div>
+            <div id="c" class="menuDiv1" onclick="onFunctionClick(this,'projectPlan')">
+                监测平面图
+            </div>
+            <div id="d" class="menuDiv1" onclick="onFunctionClick(this,'projectMonitorItem')">
+                监测项列表
+            </div>
+            <div id="e" class="menuDiv1" onclick="onFunctionClick(this,'autoSetting')">
+                自动化设置
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',border:false">
+        <div class="row J_mainContent" id="content-main" style="height:100%;width:100%;overflow: hidden;">
+            <iframe class="J_iframe" id="J_iframe" name="iframe0" width="100%" height="100%" frameborder="0" data-id="0" seamless></iframe>
+        </div>
+    </div>
+    <script type="text/javascript">
+    //url中附带的type字符串
+    var theRequest; 
+    //url的"?"后字符串
+    var url;
+    $(function() {
+        url = location.search; //获取url中"?"符后的字串  
+        $("#J_iframe").attr("src", "projectInfo"+url);
+        if (url.indexOf("?") != -1) {  
+           var str = url.substr(1);  
+           theRequest = unescape(str.split("=")[1]);
+        }
+    });
+    function onFunctionClick(object, FunctionUrl) {
+    	if(theRequest=="add"){
+    		swal({ title: "请先新建工程！", type: "warning" });
+    	}else if(theRequest=="change"){
+    		$(".menuDiv2").attr("class", "menuDiv1");
+            $(object).attr("class", "menuDiv2");
+            $("#J_iframe").attr("src", FunctionUrl+url);
+        }
+    }
+    </script>
+</body>
+
+</html>

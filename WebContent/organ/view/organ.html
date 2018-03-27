@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织机构</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg easyui-layout">
+    <div data-options="region:'north'" style="width:100%;height:56px;padding:0 10px;">
+        <p style="margin-top:10px;float:left">
+            <a data-toggle="modal" id="addOrganBtn" class="btn btn-info" href="#addOrganDialog"><i class="glyphicon glyphicon-plus"></i>&nbsp增加机构</a>
+        </p>
+        <ul class="nav nav-tabs" style="float:right;width:55%;margin:7px 0;">
+            <li class="active">
+                <a data-toggle="tab" href="#tab-1"><i class="glyphicon glyphicon-globe"></i>机构列表</a>
+            </li>
+        </ul>
+    </div>
+    <div data-options="region:'center'" id="jqGrid_organ" style="padding:0 10px;">
+        <table id="organDG"></table>
+        <div id="pager_organDG"></div>
+    </div>
+    <div id="addOrganDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">增加机构</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="addOrganForm">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label>机构名称：</label>
+                                    <input class="form-control" placeholder="请输入机构名称" type="text" id="organName" name="organName" required>
+                                    <span class="help-block m-b-none"><i class="glyphicon glyphicon-info-sign"></i>请输入你的机构名称</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人：</label>
+                                    <input class="form-control" placeholder="请输入联系人" type="text" id="workerName" name="workerName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人电话：</label>
+                                    <input class="form-control" placeholder="请输入联系人电话" type="text" id="phone" name="phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人邮箱：</label>
+                                    <input class="form-control" placeholder="请输入联系人邮箱" type="email" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人登录名：</label>
+                                    <input class="form-control" placeholder="请输入登录名" type="text" id="loginName" name="loginName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人昵称：</label>
+                                    <input class="form-control" placeholder="请输入昵称" type="text" id="accountName" name="accountName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人初始密码：</label>
+                                    <input class="form-control" placeholder="请输入初始密码" type="password" id="password" name="password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>机构联系人确认密码：</label>
+                                    <input class="form-control" placeholder="确认初始密码" type="password" id="confirmPassword" name="confirmPassword" required>
+                                </div>
+                            </div>
+<!--                             <div class="col-md-6 col-lg-6"> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员：</label> -->
+<!--                                     <input class="form-control" placeholder="请输入联系人" type="text" id="supervisorName" name="supervisorName" required> -->
+<!--                                 </div> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员电话：</label> -->
+<!--                                     <input class="form-control" placeholder="请输入联系人电话" type="text" id="supervisorPhone" name="supervisorPhone" required> -->
+<!--                                 </div> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员邮箱：</label> -->
+<!--                                     <input class="form-control" placeholder="请输入联系人邮箱" type="email" id="supervisorEmail" name="supervisorEmail" required> -->
+<!--                                 </div> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员登录名：</label> -->
+<!--                                     <input class="form-control" placeholder="请输入登录名" type="text" id="supervisorLoginName" name="supervisorLoginName" required> -->
+<!--                                 </div> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员昵称：</label> -->
+<!--                                     <input class="form-control" placeholder="请输入昵称" type="text" id="supervisorAccountName" name="supervisorAccountName" required> -->
+<!--                                 </div> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员初始密码：</label> -->
+<!--                                     <input class="form-control" placeholder="请输入初始密码" type="password" id="supervisorPassword" name="supervisorPassword" required> -->
+<!--                                 </div> -->
+<!--                                 <div class="form-group"> -->
+<!--                                     <label>监督员确认密码：</label> -->
+<!--                                     <input class="form-control" placeholder="确认初始密码" type="password" id="supervisorConfirmPassword" name="supervisorConfirmPassword" required> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="saveOrganBtn" class="btn btn-sm btn-info" name="signup">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                    </button>
+                    <button type="button" id="cancelSaveOrganBtn" class="btn btn-sm btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/organ/js/organ.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+</body>
+<script type="text/javascript">
+$(function(){
+	$("#addOrganForm").validate({
+	    onfocusout: function(element) {
+	        $(element).valid();
+	    }
+	});
+})
+</script>
+
+</html>

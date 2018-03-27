@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link href="/smosplat/common/css/common.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <title>Insert title here</title>
+</head>
+<script type="text/javascript">
+$(function() {
+    $.post("/smosplat/getCurrentProjectInfo", function(data, status) {
+        var dataObj = JSON.parse(data);
+        var projectUuid = dataObj.project.projectUuid;
+        $.post("getProjectByUuid", { projectUuid: projectUuid }, function(data, status) {
+            var allDataObj = JSON.parse(data).project;
+            //填充数据
+            $("#viewprojectUuid").html(allDataObj.projectUuid);
+            $("#viewprojectName").html(allDataObj.projectName);
+            $("#viewlon").html(allDataObj.lon);
+            $("#viewlat").html(allDataObj.lat);
+            $("#viewcode").html(allDataObj.code);
+            $("#viewaddress").html(allDataObj.address);
+            $("#viewprojectType").html(allDataObj.projectType);
+            $("#viewstructure").html(allDataObj.structure);
+            $("#viewdeep").html(allDataObj.deep);
+            $("#viewperimeter").html(allDataObj.perimeter);
+            $("#viewmonitorLeader").html(allDataObj.monitorLeader);
+            $("#viewmonitorWorker").html(allDataObj.monitorWorker);
+            $("#viewsuperviseCompany").html(allDataObj.superviseCompany);
+            $("#viewsuperviseWorker").html(allDataObj.superviseWorker);
+            $("#viewsafeLevel").html(allDataObj.safeLevel);
+            $("#viewsuperviseCode").html(allDataObj.superviseCode);
+            $("#viewbuildCompany").html(allDataObj.buildCompany);
+            $("#viewbuildContactName").html(allDataObj.buildContactName);
+            $("#viewdesignCompany").html(allDataObj.designCompany);
+            $("#viewdesignContactName").html(allDataObj.designContactName);
+            $("#viewconstructCompany").html(allDataObj.constructCompany);
+            $("#viewconstructContactName").html(allDataObj.constructContactName);
+            $("#viewsupervisorCompany").html(allDataObj.supervisorCompany);
+            $("#viewsupervisorContactName").html(allDataObj.supervisorContactName);
+
+        });
+    });
+});
+</script>
+
+<body>
+    <form id="viewprojectForm" style="height:100%;overflow:auto;">
+        <table id="tableHeader"  cellpadding="0" cellspacing="0">
+            <tr>
+                <th>
+                    查看工程
+                </th>
+            </tr>
+        </table>
+        <table class="tableEditDetail" style="height:43%;" id="projectInfo" cellpadding="0" cellspacing="1">
+            <tr>
+                <th style="width: 15%;">
+                    工程编号
+                </th>
+                <td style="width: 35%">
+                    <label name="viewcode" id="viewcode"></label>
+                </td>
+                <th style="width: 15%">
+                    监督编号
+                </th>
+                <td>
+                    <label id="viewsuperviseCode"></label>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%">
+                    工程名称
+                </th>
+                <td>
+                    <label id="viewprojectName"></label>
+                </td>
+                <th>
+                    工程地址
+                </th>
+                <td>
+                    <label id="viewaddress"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    工程类别
+                </th>
+                <td>
+                    <label id="viewprojectType" style="height:20px;"></label>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    支护形式
+                </th>
+                <td>
+                    <label id="viewstructure"></label>
+                </td>
+                <th>
+                    安全等级
+                </th>
+                <td>
+                    <label id="viewsafeLevel" style="height:20px;"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    基坑设计深度
+                </th>
+                <td>
+                    <label id="viewdeep"></label>
+                </td>
+                <th>
+                    基坑周长:
+                </th>
+                <td>
+                    <label id="viewperimeter"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监测负责人
+                </th>
+                <td colspan="1">
+                    <label id="viewmonitorLeader"></label>
+                </td>
+                <th>
+                    监测人员
+                </th>
+                <td colspan="1">
+                    <label id="viewmonitorWorker"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    安全监督单位
+                </th>
+                <td colspan="1">
+                    <label id="viewsuperviseCompany" style="height:20px;width:98%;"></label>
+                </td>
+                <th>
+                    监督人员
+                </th>
+                <td colspan="1">
+                    <label id="viewsuperviseWorker"></label>
+                </td>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="projectInfo1" cellpadding="0" cellspacing="1" style="margin-top: -1px;height:40%;">
+            <tr>
+                <th style="width: 15%">
+                    建设单位
+                </th>
+                <td style="width: 35%">
+                    <label id="viewbuildCompany" style="height:80px;width:90%;"></label>
+                </td>
+                <td style="width: 50%">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1">
+                        <tr>
+                            <th style="width: 35%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 65%">
+                                <label id="viewbuildContactName" style="width:80%;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%">
+                    设计单位
+                </th>
+                <td style="width: 35%">
+                    <label name="viewdesignCompany" id="viewdesignCompany" style="height:60px;width:80%;"></label>
+                </td>
+                <td style="width: 50%">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <tr>
+                            <th style="width: 35%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 65%">
+                                <label id="viewdesignContactName" style="width:80%;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%">
+                    施工单位
+                </th>
+                <td style="width: 35%">
+                    <label id="viewconstructCompany" style="height:60px;width:80%;"></label>
+                </td>
+                <td style="width:50%">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1">
+                        <tr>
+                            <th style="width: 35%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 65%">
+                                <label id="viewconstructContactName" style="width:80%;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%">
+                    监理单位
+                </th>
+                <td style="width: 35%">
+                    <label id="viewsupervisorCompany" style="height:60px;width:80%;"></label>
+                </td>
+                <td style="width: 50%">
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1">
+                        <tr>
+                            <th style="width: 35%;background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 65%">
+                                <label id="viewsupervisorContactName" style="width:80%;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <!-- 设置 -->
+    <script type="text/javascript" src="/smosplat/common/js/lib/sockjs/sockjs-1.1.1.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/stomp/stomp.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/uploadUtil.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/smosplat/data/js/overview.js"></script>
+    <!--    时间控件 -->
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/PerfectLoad.js"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+    th.ui-th-column div {
+        white-space: normal !important;
+        height: auto !important;
+        padding: 0px;
+    }
+    
+    .tableEditDetail th,
+    .tableEditDetail td {
+        height: 40px;
+        line-height: 40px;
+    }
+    .alarmInfo {
+        width: 40%;
+        height: 30px;
+        margin: 2px auto;
+        border: 1px solid #D0E2F8;
+        font-size: 12px;
+        float:left;
+        margin-left:5px;
+    }
+
+    .alarmInfo table {
+        float: left;
+        margin-left: 20px;
+        font-size: 12px
+    }
+
+    .alarmInfo table td {
+        width: 100px;
+        vertical-align: middle;
+    }
+	.sitePic{
+	padding:5px 5px;
+	border:solid 1px #555;
+	}
+    </style>
+    <script>
+    $(function() {
+        var bodyHeight = $('#autoBody').height();
+        //设置模态框弹出的表格的高度
+        $("#safeInfo-modal").height(bodyHeight - 200);
+    });
+    </script>
+</head>
+
+<body class="easyui-layout" id="autoBody">
+	 <div data-options="region:'north'" style="width:100%;height:45px;padding:0 10px;">
+		<ul id="myTab" class="nav nav-tabs">
+			<li class="active">
+				<a href="#overView" data-toggle="tab">
+					  概览
+				</a>
+			</li>
+			<li><a href="#sitePic" data-toggle="tab">现场图片</a></li>
+		</ul>
+	</div>
+
+    <div data-options="region:'center'" style="padding:0px 10px 10px 10px;">
+    	<div id="myTabContent" class="tab-content" style="width:100%;height:99%;">
+    		<div class="tab-pane fade in active" id="overView" style="width:100%;height:100%;">
+		       <div data-options="region:'center'" id="infoGrid1" style="height:60%;">
+		       <p style="margin:2px 5px 0 3px;float:right;">
+		          <a data-toggle="modal" class="btn btn-xs btn-info" id="dataExportButton" ><i class="glyphicon glyphicon-list-alt"></i>&nbsp导出报表</a>
+		        </p>
+		         <div class="tableListTitle" style="margin-top:5px;">
+		                <label style="margin-right:-60px;">各监测项目简略汇总 1</label>
+	        	 </div>
+	        	 <table id="mainInfo1"></table>
+		       </div>
+		        <div data-options="region:'south'" id="infoGrid2" style="height:40%;">
+	        	<div class="tableListTitle" style="margin-top:5px;">
+		                <label>各监测项目简略汇总 2</label>
+	        	</div>
+	        	<table id="mainInfo2"></table>
+	        	</div>
+        	</div>
+        	<div class="tab-pane fade " id="sitePic" >
+			        <div class="tableListTitle" style="margin-top:5px;">
+			               现场图片
+		        	</div>
+		        	<table id="sitePicInfo"></table>
+		        	<img id = sitePicContent class = "sitePic" src = "" >
+        	</div>
+        </div>
+    </div>
+    <!-- 查看监测项安全状态的模态框 -->
+    <div id="safeInfoDialog" class="modal fade" data-backdrop="false">
+        <div class="modal-dialog" id="safeInfo-modal" style="width:700px;">
+            <div class="modal-content" style="height: 100%;">
+                <div class="modal-body" style="padding:15px;">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12" style="padding:0 5px;" id="accumWarning">
+                            <div class="tableListTitle">
+                                累积变化值报警情况
+                            </div>
+                            <table id="safeInfoDG"></table>
+                        </div>
+                        <div class="alarmInfo" >
+                            <div style=" height: 5px;">
+                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <div style="float: left; width: 15px;">
+                                                <img src="/smosplat/common/image/red.gif" /></div>
+                                            <div style="float: left; width: 75px; height: 20px; line-height: 20px;">
+                                                超控制值</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div style="float: left; width: 15px;">
+                                                <img src="/smosplat/common/image/yellow.gif" /></div>
+                                            <div style="float: left; width: 75px; height: 20px; line-height: 20px;">
+                                                超报警值
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p style="margin:0 auto;text-align:right;">
+                            <button type="button" style="margin-top:5px;margin-right:15px;" class="btn btn-xs btn-default" id="cancelBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp关闭</strong>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dataExportDialog" class="modal fade" data-backdrop="false">
+       <div class="modal-dialog">
+            <div class="modal-content" style="height:100%;overflow:auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="exportForm">
+                            <table id="tableHeader" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th>
+                                        数据导出
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        项目名称：
+                                    </th>
+                                    <td colspan="2">
+                                        <input name="projectName" type="text" maxlength="100" id="projectName" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        项目地址：
+                                    </th>
+                                    <td colspan="2">
+                                        <input name="projectAddress" type="text" maxlength="100" id="projectAddress" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                       测量仪器：
+                                    </th>
+                                    <td colspan="2">
+                                        <input name="deviceName" type="text" maxlength="100" id="deviceName" class="input" style="width:80%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        选择时间：
+                                    </th>
+                                    <td colspan="1" style="background-color: #fff2ec;">
+                                      起始:
+                                    <input id="beginDate" class="easyui-datetimebox" style="width:132px;" data-options="required:true,missingMessage:'不能为空！'" data-options="sharedCalendar:'#cc'">
+                                    </td>
+                                    <td colspan="1" style="background-color: #fff2ec;">
+                                        结束:
+                                    <input id="endDate" class="easyui-datetimebox" style="width:132px;" data-options="required:true,missingMessage:'不能为空！'" data-options="sharedCalendar:'#cc'">
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <th colspan="1" style='color:#1B87B8'>
+                                        参考规范：
+                                    </th>
+                                    <td colspan="2">
+                                        <textarea name="specification" rows="2" cols="20" id="specification" class="input" style="height:80px;width:90%;margin:5px;" required></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3">
+                                        <button type="button" id="saveExportBtn" class="btn btn-xs btn-success">
+                                            <strong><i class="glyphicon glyphicon-share"></i>&nbsp导出</strong>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" id="cancelNetworkBtn" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

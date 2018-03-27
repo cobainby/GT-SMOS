@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <script type="text/javascript" src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/project/js/projectDetail.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+    <link href="/smosplat/common/css/divTable.css" rel="stylesheet">
+    <title>Insert title here</title>
+</head>
+
+<body>
+    <div style="width:100%;height:100%;">
+        <table class="tableEditDetail" id="projectInfo" cellpadding="0" cellspacing="1">
+            <tr>
+                <th style="width: 15%;">
+                    工程编号
+                </th>
+                <td style="width: 35%">
+                    <label name="code" id="code"></label>
+                </td>
+                <th style="width: 15%">
+                    监督编号
+                </th>
+                <td>
+                    <label name="superviseCode" id="superviseCode"></label>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 15%">
+                    工程名称
+                </th>
+                <td>
+                    <label name="projectName" id="projectName" style="height:50px;"></label>
+                </td>
+                <th>
+                    工程地址
+                </th>
+                <td>
+                    <label name="address" id="address" style="height:50px;"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    工程类别
+                </th>
+                <td>
+                    <label name="projectType" id="projectType" style="height:20px;"></label>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    支护形式
+                </th>
+                <td>
+                    <label name="structure" id="structure"></label>
+                </td>
+                <th>
+                    安全等级
+                </th>
+                <td>
+                    <label name="safeLevel" id="safeLevel" style="height:20px;"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    基坑设计深度
+                </th>
+                <td>
+                    <label name="deep" id="deep"></label>
+                </td>
+                <th>
+                    基坑周长:
+                </th>
+                <td>
+                    <label name="perimeter" id="perimeter"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监测负责人
+                </th>
+                <td colspan="3">
+                    <label name="monitorLeader" id="monitorLeader"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监测人员
+                </th>
+                <td colspan="3">
+                    <label  name="monitorWorker" id="monitorWorker"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    安全监督单位
+                </th>
+                <td colspan="3">
+                    <label name="superviseCompany" id="superviseCompany" style="height:20px;width:98%;"></label>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监督人员
+                </th>
+                <td colspan="3">
+                    <label name="superviseWorker" id="superviseWorker"></label>
+                </td>
+            </tr>
+        </table>
+        <table class="tableEditDetail" id="projectInfo1" cellpadding="0" cellspacing="1" style="margin-top: -1px">
+            <tr>
+                <th style="width: 15%">
+                    建设单位
+                </th>
+                <td>
+                    <label name="buildCompany" id="buildCompany" style="height:80px;width:90%;"></label>
+                </td>
+                <td>
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                负责人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="buildLeaderName" id="buildLeaderName" style="width:80%;"></label>
+                            </td>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="buildLeaderPhone" id="buildLeaderPhone" style="width:70%;"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="buildContactName"  id="buildContactName" style="width:80%;" ></label>
+                            </td>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="buildContactPhone" id="buildContactPhone" style="width:70%;"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="buildContactName1" id="buildContactName1"  style="width:80%;" ></label>
+                            </td>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="buildContactPhone1"  id="buildContactPhone1"  style="width:70%;" >123456</label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    设计单位
+                </th>
+                <td>
+                    <label name="designCompany"  id="designCompany" style="height:80px;width:90%;"></label>
+                </td>
+                <td>
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                负责人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="designLeaderName" id="designLeaderName"  style="width:80%;"></label>
+                            </td>
+                            <th style=" width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="designLeaderPhone"  id="designLeaderPhone" style="width:70%;" ></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="designContactName" id="designContactName"  style="width:80%;"></label>
+                            </td>
+                            <th style=" width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="designContactPhone"  id="designContactPhone" style="width:70%;" ></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="designContactName1" id="designContactName1" style="width:80%;" ></label>
+                            </td>
+                            <th style=" width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="designContactPhone1" id="designContactPhone1"style="width:70%;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    施工单位
+                </th>
+                <td>
+                    <label name="constructCompany"  id="constructCompany"  style="height:80px;width:90%;"></label>
+                </td>
+                <td>
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <tr>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                负责人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="constructLeaderName" id="constructLeaderName"  style="width:80%;" ></label>
+                            </td>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="constructLeaderPhone"  id="constructLeaderPhone" style="width:70%;" ></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="constructContactName"  id="constructContactName"  style="width:80%;" ></label>
+                            </td>
+                            <th style=" width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="constructContactPhone"  id="constructContactPhone"  style="width:70%;"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%; background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="constructContactName1"  id="constructContactName1" style="width:80%;" ></label>
+                            </td>
+                            <th style=" width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="constructContactPhone1"  id="constructContactPhone1"  style="width:70%;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    监理单位
+                </th>
+                <td>
+                    <label name="supervisorCompany" id="supervisorCompany" style="height:80px;width:90%;"></label>
+                </td>
+                <td>
+                    <table class="tableEditDetail" cellpadding="0" cellspacing="1" width="100%">
+                        <tr>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                负责人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="supervisorLeaderName"  id="supervisorLeaderName"  style="width:80%;"></label>
+                            </td>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="supervisorLeaderPhone"  id="supervisorLeaderPhone"  style="width:70%;" ></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="supervisorContactName"  id="supervisorContactName" style="width:80%;" ></label>
+                            </td>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="supervisorContactPhone"  id="supervisorContactPhone" style="width:70%;" ></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                联系人
+                            </th>
+                            <td style="width: 15%">
+                                <label name="supervisorContactName1" id="supervisorContactName1"  style="width:80%;" ></label>
+                            </td>
+                            <th style="width: 10%;background-color: #fff2ec;">
+                                电话
+                            </th>
+                            <td style="width: 20%">
+                                <label name="supervisorContactPhone1" id="supervisorContactPhone1" style="width:70%;" ></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

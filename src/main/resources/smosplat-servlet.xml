@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+		classpath:org/springframework/web/servlet/config/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans 
+		classpath:org/springframework/beans/factory/xml/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context 
+		classpath:org/springframework/context/config/spring-context-4.0.xsd">
+	<!-- 默认的注解映射支持 -->
+	<mvc:annotation-driven>
+		<!-- 解决中文乱码问题 -->
+		<mvc:message-converters register-defaults="true">
+		    <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+		      <property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+		    </bean>
+	   </mvc:message-converters>
+	</mvc:annotation-driven>
+	<!-- 配置spring扫描哪些包 -->
+	<context:component-scan base-package="com.southgt.smosplat.*.web,com.southgt.smosplat.*.*.web,com.southgt.smosplat.*.*.*.web"></context:component-scan>
+	<!-- defaultServletHandler处理 所有静态资源请求-->
+   	<mvc:default-servlet-handler/>
+   	<!-- 输入项目根地址时直接跳转到index页（根据index逻辑视图名找到index.html） -->
+	<!-- <mvc:view-controller path="/" view-name="index"/> -->
+	<!-- 视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/"></property>
+		<property name="suffix" value=".html"></property>
+	</bean>
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	 
+	<property name="messageConverters"> 
+	<list> 
+	<!--配置下载返回类型-->
+	<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/> 
+	<bean class="org.springframework.http.converter.StringHttpMessageConverter"> 
+	<!--配置编码方式-->
+	<property name="supportedMediaTypes" value="application/json; charset=UTF-8" /> 
+	</bean> 
+	</list> 
+	</property> 
+	</bean>
+</beans>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常规设备管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/smosplat/common/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/jqgrid/ui.jqgrid.css">
+    <link href="/smosplat/common/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/js/lib/easyui/themes/default/easyui.css">
+    <link href="/smosplat/common/js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/smosplat/common/css/fileinput.css">
+</head>
+
+<body class="gray-bg easyui-layout">
+    <div data-options="region:'north'" style="width:100%;height:56px;padding:0 10px;">
+        <p style="margin-top:10px;float:left">
+            <a data-toggle="modal" class="btn btn-info" id="addDeviceBtn"><i class="glyphicon glyphicon-plus"></i>&nbsp增加设备</a>
+        </p>
+        <div id="deviceToolbar" style="height:34px;float:left;margin:10px 3px;">
+            <div style="line-height: 33px;vertical-align: middle;">
+                <label>根据机构进行过滤：</label>
+                <input id="organCB" class="easyui-combobox" data-options="valueField:'organUuid',textField:'organName',editable:false" style="width:200px;">
+                <a id="filterByOrganBtn" class="btn btn-danger btn-xs" iconCls="icon-search"><i class="glyphicon glyphicon-search"></i>&nbsp过滤</a>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="float:right;width:55%; margin:7px 0;">
+            <li class="active">
+                <a data-toggle="tab" href="#tab-1"><i class="glyphicon glyphicon-bookmark"></i>常规设备列表</a>
+            </li>
+        </ul>
+    </div>
+    <div data-options="region:'center'" id="jqGrid_Device" style="padding:0 10px;">
+        <table id="deviceDG"></table>
+        <div id="pager_deviceDG"></div>
+    </div>
+    <div id="addDeviceDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;"><label id="formUrl">增加设备</label></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="addDeviceForm">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>设备类型：</label>
+                                    <select id="devType" name="devType" class="form-control select">
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>设备编号：</label>
+                                    <input class="form-control" placeholder="请输入设备编号" type="text" id="devSn" name="devSn" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>生产厂家：</label>
+                                    <input class="form-control" placeholder="请输入生产厂家" type="text" id="devManufactor" name="devManufactor" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>设备状态：</label>
+                                    <select id="devStatusCB" name="devStatusCB" type="text" class="form-control select2" placeholder="设备状态...">
+                                        <option value="-1">停用</option>
+                                        <option value="0">启用</option>
+                                    </select>
+                                </div>
+                                 <div class="form-group">
+                                    <label>设备保管员：</label>
+                                    <input class="form-control" type="text" id="keeper" name="keeper">
+                                </div>
+                                <div class="form-group">
+                                    <label>校准证号：</label>
+                                    <input class="form-control" type="text" id="calibratedNum" name="calibratedNum">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>设备型号：</label>
+                                    <select id="devMoldel" name="devMoldel" class="form-control select">
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>检定/校准机构：</label>
+                                    <input class="form-control" placeholder="请输入检定/校准机构" type="text" id="devOrg" name="devOrg" required="" aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label>检定/校准有效期：</label>
+                                    <input id="devValidateDate" style="width:255px;height:30px" class="easyui-datetimebox" data-options="required:true,missingMessage:'不能为空！'" data-options="sharedCalendar:'#cc'">
+                                </div>
+                                <div class="form-group">
+                                    <label>备注：</label>
+                                    <input class="form-control" type="text" id="remark" name="remark">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="col-md-6 col-lg-6">
+                            <label>仪器设备台帐及计量检定证书：</label>
+                            <br />
+                            <div class="form-group">
+                                <div style="width:250px;height:200px;">
+                                    <div style="width:250px;height:50px;">
+                                        <div style="width:100px;height:50px;display: inline-block;">
+                                            <form id="deviceFileForm" action="uploadDeviceFiles" method="post" enctype="multipart/form-data">
+                                                <input id="deviceLicense_input" style="width:100%;height:100%;" name="file" type="file" data-show-preview="false">
+                                            </form>
+                                        </div>
+                                        <input id="deviceLicense1" type="hidden" />
+                                    </div>
+                                    <div id="localImage" style="width:250px;height:150px;">
+                                        <img id="deviceLicense" style="width: 120px; height: 120px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="saveDeviceBtn" class="btn btn-sm btn-info" name="signup">
+                        <strong><i class="glyphicon glyphicon-ok"></i>&nbsp确定</strong>
+                    </button>
+                    <button type="button" id="cancelDeviceBtn" class="btn btn-sm btn-default" data-dismiss="modal"><strong><i class="glyphicon glyphicon-remove"></i>&nbsp取消</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="viewDialog" class="modal fade" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="clo" class="close" data-dismiss="modal" aria-hidden="true" style="float:right;">
+                        &times;
+                    </button>
+                    <h3 class="m-t-none m-b" style="float:left;margin-bottom: 0px;">详细信息</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <form id="viewForm">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>设备类型：</label>
+                                    <input class="form-control" type="text" id="devTypeL" name="devTypeL" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>设备编号：</label>
+                                    <input class="form-control" type="text" id="devSnL" name="snL" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>生产厂家：</label>
+                                    <input class="form-control" type="text" id="devManufactorL" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>设备状态：</label>
+                                    <input class="form-control" type="text" id="devStatusCBL" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label>设备型号：</label>
+                                    <input class="form-control" type="text" id="devMoldelL" name="phone" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>检定/校准机构：</label>
+                                    <input class="form-control" type="text" id="devOrgL" name="devOrg" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>检定/校准有效期：</label>
+                                    <input class="form-control" type="text" id="devValidateDateL" name="devOrg" disabled>
+                                </div>
+                                 <div class="form-group">
+                                    <label>设备保管员：</label>
+                                    <input class="form-control" type="text" id="keeper" name="keeper"disabled>
+                                </div>
+                                 <div class="form-group">
+                                    <label>校准证号：</label>
+                                    <input class="form-control" type="text" id="calibratedNumL" name="calibratedNumL"disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>备注：</label>
+                                    <input class="form-control" type="text" id="remarkL" name="remarkL" disabled>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="col-md-8 col-lg-8">
+                            <label>仪器设备台帐及计量检定证书：</label>
+                            <img id="viewPortrait" class="img-responsive img-rounded previewImage" alt="照片">
+                            <input id="viewPortrait1" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/smosplat/common/js/lib/jquery/jquery.min.js"></script>
+    <script src="/smosplat/common/js/bootstrap.min.js"></script>
+    <script src="/smosplat/common/js/content.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/validate/messages_zh.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/lib/easyui/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput.js"></script>
+    <script src="/smosplat/common/js/lib/fileinput/fileinput_locale_zh.js"></script>
+    <script type="text/javascript" src="/smosplat/organ/js/device.js"></script>
+    <script type="text/javascript" src="/smosplat/common/js/util.js"></script>
+</body>
+<script type="text/javascript">
+$(function(){
+	$("#addDeviceForm").validate({
+	    onfocusout: function(element) {
+	        $(element).valid();
+	    }
+	});
+})
+</script>
+
+</html>
